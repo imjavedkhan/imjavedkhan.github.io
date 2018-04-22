@@ -1,0 +1,29 @@
+
+body{
+  background:linear-gradient(orange,deepskyblue,lime);
+}
+.contact-container{
+  padding-right: 20px;
+  text-align: right;
+
+}
+.github{
+  display: inline-block;
+}
+.instagram{
+  display: inline-block;
+}
+.facebook{
+  display: inline-block;
+}
+.name{
+  display: inline-block;
+  color: white;
+}
+.skills-list{
+  padding-left: 20px;
+}
+
+.android{
+  
+}
