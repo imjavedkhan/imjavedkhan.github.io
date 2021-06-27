@@ -1,3 +1,3 @@
 # imjavedkhan.github.io
 
-<p> Hi,Learning and Documneting my full stack journey. </p> 
+<p> Hi,Learning and Documenting my full stack journey. </p> 
