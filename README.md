@@ -1,3 +1,3 @@
 # imjavedkhan.github.io
 
-<h2> Hello, I am Javed Ali Khan <h2>
+<p> Hi,Learning and Documneting my full stack journey. </p> 
