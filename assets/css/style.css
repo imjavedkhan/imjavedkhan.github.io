@@ -1,0 +1,59 @@
+html, body {
+    background-color: black;
+    color: rgb(154, 255, 1);
+    font-family:'Courier New', Courier, monospace;
+    font-size: larger;
+}
+.container {
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.contain{
+    background-size: cover;
+    padding-top: 150px;
+    text-align: center;
+    
+}
+
+span{
+    color: rgb(125, 67, 232);
+}
+
+.btw{
+    color: whitesmoke;
+}
+
+.logo{
+    height:200px; 
+    border-radius: 50%; 
+    border: 10px solid #FEDE00;
+}
+.git{
+    height:50px; 
+    border-radius: 50%; 
+    border: 4px solid grey;
+    background-color: grey;
+}
+.linkedin{
+    height:50px; 
+    border-radius: 50%; 
+    border: 4px solid grey;
+    background-color: grey;
+}
+.instagram{
+    height:50px; 
+    border-radius: 50%; 
+    border: 4px solid grey;
+    background-color: grey;
+}
+.social{
+    margin-left:20px;
+}
