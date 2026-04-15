@@ -250,6 +250,17 @@
         box-shadow: 0 0 15px var(--glow-color);
       }
 
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+
       /* Smooth theme transition for key elements */
       nav,
       section,
@@ -301,6 +312,11 @@
             class="text-primary/60 hover:text-primary transition-colors"
             href="#skills"
             >Skills</a
+          >
+          <a
+            class="text-primary/60 hover:text-primary transition-colors"
+            href="#articles"
+            >Articles</a
           >
           <a
             class="text-primary/60 hover:text-primary transition-colors"
@@ -770,6 +786,50 @@
           </div>
         </div>
       </section>
+      <!-- Latest Articles Section -->
+      <section class="py-32 px-6 max-w-7xl mx-auto" id="articles">
+        <div class="flex items-baseline gap-4 mb-20">
+          <span
+            class="text-primary-container font-mono text-sm tracking-tighter"
+            >03/</span
+          >
+          <h2
+            class="text-5xl font-headline font-bold uppercase tracking-tighter"
+          >
+            LATEST.ARTICLES
+          </h2>
+        </div>
+        <div class="relative group/carousel">
+          <!-- Navigation Arrows -->
+          <button
+            id="scroll-left"
+            class="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 bg-surface-container-high p-3 rounded-full border border-outline-variant/20 opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-primary hover:text-on-primary disabled:hidden"
+            title="Scroll Left"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+
+          <div
+            id="articles-grid"
+            class="flex overflow-x-auto gap-8 scroll-smooth no-scrollbar pb-8 px-1"
+          >
+            <!-- Articles will be loaded dynamically via fetch -->
+            <div
+              class="w-full py-12 text-center text-on-surface-variant font-mono text-sm"
+            >
+              INITIALIZING NEURAL LINK TO MEDIUM...
+            </div>
+          </div>
+
+          <button
+            id="scroll-right"
+            class="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 bg-surface-container-high p-3 rounded-full border border-outline-variant/20 opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-primary hover:text-on-primary disabled:hidden"
+            title="Scroll Right"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </section>
       <!-- Certs & Education Section -->
       <section
         class="py-32 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-24"
@@ -780,7 +840,7 @@
           <div class="flex items-baseline gap-4 mb-12">
             <span
               class="text-primary-container font-mono text-sm tracking-tighter"
-              >03/</span
+              >04/</span
             >
             <h2
               class="text-4xl font-headline font-bold uppercase tracking-tighter"
@@ -900,7 +960,7 @@
           <div class="flex items-baseline gap-4 mb-12">
             <span
               class="text-primary-container font-mono text-sm tracking-tighter"
-              >04/</span
+              >05/</span
             >
             <h2
               class="text-4xl font-headline font-bold uppercase tracking-tighter"
@@ -1049,6 +1109,139 @@
         localStorage.setItem("theme", isDark ? "dark" : "light");
         updateIcon();
       });
+
+      // Medium Articles Integration
+      async function fetchMediumArticles() {
+        const grid = document.getElementById("articles-grid");
+        const RSS_URL = "https://medium.com/feed/@javedalikhan50";
+        const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+
+        try {
+          const response = await fetch(API_URL);
+          const data = await response.json();
+
+          if (data.status === "ok") {
+            grid.innerHTML = ""; // Clear loader
+
+            // Show only first 3 articles to maintain layout balance,
+            // or all if you prefer. Using 3 for the grid.
+            data.items.forEach((item) => {
+              const articleCard = createArticleCard(item);
+              grid.innerHTML += articleCard;
+            });
+          } else {
+            throw new Error(data.message);
+          }
+        } catch (error) {
+          console.error("Medium Fetch Error:", error);
+          grid.innerHTML = `
+            <div class="w-full py-12 text-center text-error font-mono text-xs uppercase">
+              Failed to sync with Medium feed. <br/>
+              <a href="https://medium.com/@javedalikhan50" target="_blank" class="underline mt-2 inline-block">View on Medium directly</a>
+            </div>
+          `;
+        }
+      }
+
+      // Scroll Controls
+      const grid = document.getElementById("articles-grid");
+      const leftBtn = document.getElementById("scroll-left");
+      const rightBtn = document.getElementById("scroll-right");
+
+      const updateButtons = () => {
+        if (!grid) return;
+        leftBtn.style.display = grid.scrollLeft <= 5 ? "none" : "block";
+        const maxScroll = grid.scrollWidth - grid.clientWidth;
+        rightBtn.style.display =
+          grid.scrollLeft >= maxScroll - 5 ? "none" : "block";
+      };
+
+      leftBtn.addEventListener("click", () => {
+        grid.scrollBy({ left: -400, behavior: "smooth" });
+      });
+
+      rightBtn.addEventListener("click", () => {
+        grid.scrollBy({ left: 400, behavior: "smooth" });
+      });
+
+      grid.addEventListener("scroll", updateButtons);
+      window.addEventListener("resize", updateButtons);
+
+      // Initialize button state
+      updateButtons();
+
+      // Call updateButtons after a short delay once articles are loaded
+      const originalFetch = fetchMediumArticles;
+      fetchMediumArticles = async () => {
+        await originalFetch();
+        setTimeout(updateButtons, 500);
+      };
+
+      function createArticleCard(item) {
+        // Extract first image from content if thumbnail is missing
+        let imageUrl = item.thumbnail;
+        if (!imageUrl || imageUrl === "") {
+          const imgMatch = item.content.match(/<img[^>]+src="([^">]+)"/);
+          imageUrl = imgMatch
+            ? imgMatch[1]
+            : "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80";
+        }
+
+        // Clean description and create a short snippet
+        // Use a temporary DOM element to strip HTML tags safely
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = item.content;
+
+        // Remove figure/figcaption if they are at the start (usually just showing the title image again)
+        const figures = tempDiv.querySelectorAll("figure");
+        figures.forEach((f) => f.remove());
+
+        const textSnippet = tempDiv.textContent || tempDiv.innerText || "";
+        const shortDescription = textSnippet.substring(0, 140).trim() + "...";
+
+        // Tags (categories) - Ensure it's an array
+        const categories = Array.isArray(item.categories)
+          ? item.categories
+          : [];
+        const tagsHtml = categories
+          .map(
+            (tag) => `
+          <span class="text-[9px] font-mono text-primary-container border border-primary-container/30 px-2 py-0.5 uppercase tracking-widest">#${tag}</span>
+        `,
+          )
+          .join("");
+
+        return `
+          <a class="flex-shrink-0 w-[85vw] md:w-[380px] group bg-surface-container-lowest border border-outline-variant/10 hover:border-primary-container/40 transition-all overflow-hidden flex flex-col"
+             href="${item.link}"
+             target="_blank">
+            <div class="aspect-video overflow-hidden relative">
+              <img alt="${item.title}"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
+                   src="${imageUrl}" />
+              <div class="absolute inset-0 bg-primary-container/10 mix-blend-overlay"></div>
+            </div>
+            <div class="p-6 flex-grow flex flex-col">
+              <div class="flex flex-wrap gap-2 mb-4">
+                ${tagsHtml}
+              </div>
+              <h3 class="text-xl font-headline font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                ${item.title}
+              </h3>
+              <p class="text-on-surface-variant text-sm font-body font-light leading-relaxed mb-6">
+                ${shortDescription}
+              </p>
+              <div class="mt-auto flex items-center text-primary-container font-mono text-[10px] uppercase tracking-widest gap-2">
+                Read transmission
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }
+
+      // Initialize fetch
+      fetchMediumArticles();
     </script>
   </body>
 </html>
