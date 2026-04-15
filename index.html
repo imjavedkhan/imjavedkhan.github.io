@@ -250,6 +250,17 @@
         box-shadow: 0 0 15px var(--glow-color);
       }
 
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+
       /* Smooth theme transition for key elements */
       nav,
       section,
@@ -788,13 +799,35 @@
             LATEST.ARTICLES
           </h2>
         </div>
-        <div class="grid md:grid-cols-3 gap-8" id="articles-grid">
-          <!-- Articles will be loaded dynamically via fetch -->
-          <div
-            class="col-span-full py-12 text-center text-on-surface-variant font-mono text-sm"
+        <div class="relative group/carousel">
+          <!-- Navigation Arrows -->
+          <button
+            id="scroll-left"
+            class="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 bg-surface-container-high p-3 rounded-full border border-outline-variant/20 opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-primary hover:text-on-primary disabled:hidden"
+            title="Scroll Left"
           >
-            INITIALIZING NEURAL LINK TO MEDIUM...
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+
+          <div
+            id="articles-grid"
+            class="flex overflow-x-auto gap-8 scroll-smooth no-scrollbar pb-8 px-1"
+          >
+            <!-- Articles will be loaded dynamically via fetch -->
+            <div
+              class="w-full py-12 text-center text-on-surface-variant font-mono text-sm"
+            >
+              INITIALIZING NEURAL LINK TO MEDIUM...
+            </div>
           </div>
+
+          <button
+            id="scroll-right"
+            class="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 bg-surface-container-high p-3 rounded-full border border-outline-variant/20 opacity-0 group-hover/carousel:opacity-100 transition-all hover:bg-primary hover:text-on-primary disabled:hidden"
+            title="Scroll Right"
+          >
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
         </div>
       </section>
       <!-- Certs & Education Section -->
@@ -807,7 +840,7 @@
           <div class="flex items-baseline gap-4 mb-12">
             <span
               class="text-primary-container font-mono text-sm tracking-tighter"
-              >03/</span
+              >04/</span
             >
             <h2
               class="text-4xl font-headline font-bold uppercase tracking-tighter"
@@ -927,7 +960,7 @@
           <div class="flex items-baseline gap-4 mb-12">
             <span
               class="text-primary-container font-mono text-sm tracking-tighter"
-              >04/</span
+              >05/</span
             >
             <h2
               class="text-4xl font-headline font-bold uppercase tracking-tighter"
@@ -1102,13 +1135,47 @@
         } catch (error) {
           console.error("Medium Fetch Error:", error);
           grid.innerHTML = `
-            <div class="col-span-full py-12 text-center text-error font-mono text-xs uppercase">
+            <div class="w-full py-12 text-center text-error font-mono text-xs uppercase">
               Failed to sync with Medium feed. <br/>
               <a href="https://medium.com/@javedalikhan50" target="_blank" class="underline mt-2 inline-block">View on Medium directly</a>
             </div>
           `;
         }
       }
+
+      // Scroll Controls
+      const grid = document.getElementById("articles-grid");
+      const leftBtn = document.getElementById("scroll-left");
+      const rightBtn = document.getElementById("scroll-right");
+
+      const updateButtons = () => {
+        if (!grid) return;
+        leftBtn.style.display = grid.scrollLeft <= 5 ? "none" : "block";
+        const maxScroll = grid.scrollWidth - grid.clientWidth;
+        rightBtn.style.display =
+          grid.scrollLeft >= maxScroll - 5 ? "none" : "block";
+      };
+
+      leftBtn.addEventListener("click", () => {
+        grid.scrollBy({ left: -400, behavior: "smooth" });
+      });
+
+      rightBtn.addEventListener("click", () => {
+        grid.scrollBy({ left: 400, behavior: "smooth" });
+      });
+
+      grid.addEventListener("scroll", updateButtons);
+      window.addEventListener("resize", updateButtons);
+
+      // Initialize button state
+      updateButtons();
+
+      // Call updateButtons after a short delay once articles are loaded
+      const originalFetch = fetchMediumArticles;
+      fetchMediumArticles = async () => {
+        await originalFetch();
+        setTimeout(updateButtons, 500);
+      };
 
       function createArticleCard(item) {
         // Extract first image from content if thumbnail is missing
@@ -1137,7 +1204,6 @@
           ? item.categories
           : [];
         const tagsHtml = categories
-          .slice(0, 3)
           .map(
             (tag) => `
           <span class="text-[9px] font-mono text-primary-container border border-primary-container/30 px-2 py-0.5 uppercase tracking-widest">#${tag}</span>
@@ -1146,7 +1212,7 @@
           .join("");
 
         return `
-          <a class="group bg-surface-container-lowest border border-outline-variant/10 hover:border-primary-container/40 transition-all overflow-hidden flex flex-col"
+          <a class="flex-shrink-0 w-[85vw] md:w-[380px] group bg-surface-container-lowest border border-outline-variant/10 hover:border-primary-container/40 transition-all overflow-hidden flex flex-col"
              href="${item.link}"
              target="_blank">
             <div class="aspect-video overflow-hidden relative">
