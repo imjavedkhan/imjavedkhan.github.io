@@ -1,5 +1,5 @@
 import { ArrowDown } from "lucide-react";
-import { BTreeHero } from "./BTreeHero";
+import { BTreeHero } from "../BTreeHero";
 import { profile } from "@/data/portfolio";
 
 export function Hero() {
