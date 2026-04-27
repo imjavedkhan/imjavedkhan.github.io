@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -16,6 +17,7 @@ const sections = [
 export function TopNav() {
   const [active, setActive] = useState<string>("about");
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -41,10 +43,30 @@ export function TopNav() {
     return () => observer.disconnect();
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [open]);
+
+  // Close on resize to desktop
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors ${
-        scrolled
+        scrolled || open
           ? "border-border bg-background/85 backdrop-blur-md"
           : "border-transparent bg-transparent"
       }`}
@@ -86,7 +108,57 @@ export function TopNav() {
           >
             <span className="text-primary">$</span> resume.pdf
           </a>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            className="inline-flex h-9 w-9 items-center justify-center border border-border text-foreground transition-colors hover:border-primary hover:text-primary md:hidden"
+          >
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        id="mobile-nav"
+        className={`md:hidden overflow-hidden border-t border-border bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-300 ease-in-out ${
+          open ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <ul className="flex flex-col px-4 py-3 sm:px-6">
+          {sections.map((s) => (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                onClick={() => setOpen(false)}
+                className={`flex items-center justify-between border-b border-border/50 py-3 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
+                  active === s.id
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span>
+                  <span className="text-primary">/</span> {s.label}
+                </span>
+                {active === s.id && (
+                  <span className="h-1.5 w-1.5 rounded-sm bg-primary" aria-hidden="true" />
+                )}
+              </a>
+            </li>
+          ))}
+          <li className="pt-3">
+            <a
+              href={profile.resumeUrl}
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-2 border border-border px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary hover:text-primary"
+            >
+              <span className="text-primary">$</span> resume.pdf
+            </a>
+          </li>
+        </ul>
       </div>
     </nav>
   );
