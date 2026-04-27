@@ -109,16 +109,14 @@ export function Contact() {
   return (
     <section id="contact" className="border-b border-border py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <header className="mb-12 grid gap-4 md:grid-cols-[200px,1fr] md:items-baseline">
-          <p className="kicker-amber">// 08 / contact</p>
-          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-            Open a connection.
-          </h2>
-        </header>
+        <SectionHeader kicker="// 08 / contact">
+          Open a connection.
+        </SectionHeader>
 
-        <div
+        <Reveal
+          variant="scale"
           className="code-frame glow-amber cursor-text"
-          onClick={() => inputRef.current?.focus()}
+          {...({ onClick: () => inputRef.current?.focus() } as object)}
         >
           <div className="code-frame-header">
             <div className="flex items-center gap-2">
@@ -176,7 +174,7 @@ export function Contact() {
               <span className="cursor-blink" />
             </div>
           </div>
-        </div>
+        </Reveal>
 
         <div className="mt-6 grid gap-3 font-mono text-xs text-muted-foreground sm:grid-cols-3">
           <a href={`mailto:${profile.email}`} className="link-amber">{profile.email}</a>
