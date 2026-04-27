@@ -170,6 +170,7 @@ export function Articles() {
             >
               {items.map((it) => {
                 const desc = stripHtml(it.description);
+                const img = extractImage(it);
                 return (
                   <a
                     key={it.link}
@@ -177,23 +178,42 @@ export function Articles() {
                     href={it.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex w-[300px] shrink-0 snap-start flex-col justify-between border border-border bg-background p-6 transition-colors hover:border-primary hover:bg-surface sm:w-[360px]"
+                    className="group flex w-[300px] shrink-0 snap-start flex-col border border-border bg-background transition-colors hover:border-primary hover:bg-surface sm:w-[360px]"
                   >
-                    <div>
-                      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                        <time dateTime={it.pubDate}>
-                          {new Date(it.pubDate).toISOString().slice(0, 10)}
-                        </time>
-                        <span>{readingTime(desc)} min</span>
-                      </div>
-                      <h3 className="mt-3 line-clamp-3 font-display text-xl font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
-                        {it.title}
-                      </h3>
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{desc}</p>
+                    <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-surface-3">
+                      {img ? (
+                        <img
+                          src={img}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                          // no image
+                        </div>
+                      )}
                     </div>
-                    <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                      <span>read</span>
-                      <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                    <div className="flex flex-1 flex-col justify-between p-6">
+                      <div>
+                        <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                          <time dateTime={it.pubDate}>
+                            {new Date(it.pubDate).toISOString().slice(0, 10)}
+                          </time>
+                          <span>{readingTime(desc)} min</span>
+                        </div>
+                        <h3 className="mt-3 line-clamp-3 font-display text-xl font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
+                          {it.title}
+                        </h3>
+                        <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                      <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                        <span>read</span>
+                        <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                      </div>
                     </div>
                   </a>
                 );
