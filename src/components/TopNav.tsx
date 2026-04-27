@@ -129,8 +129,14 @@ export function TopNav() {
         }`}
       >
         <ul className="flex flex-col px-4 py-3 sm:px-6">
-          {sections.map((s) => (
-            <li key={s.id}>
+          {sections.map((s, idx) => (
+            <li
+              key={s.id}
+              className={`transition-all duration-300 ${
+                open ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0"
+              }`}
+              style={{ transitionDelay: open ? `${idx * 40}ms` : "0ms" }}
+            >
               <a
                 href={`#${s.id}`}
                 onClick={() => setOpen(false)}
