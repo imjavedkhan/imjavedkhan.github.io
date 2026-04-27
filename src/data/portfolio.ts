@@ -13,7 +13,7 @@ export const profile = {
   linkedin: "https://linkedin.com/in/javed-ali-khan",
   twitter: "https://x.com/javedalikhan",
   resumeUrl: "/resume.pdf",
-  rssFeedUrl: "https://medium.com/feed/@javedalikhan", // change to any RSS feed
+  rssFeedUrl: "https://medium.com/feed/@javedalikhan50", // change to any RSS feed
 };
 
 export const stats = [

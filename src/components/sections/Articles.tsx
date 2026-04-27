@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { profile } from "@/data/portfolio";
 
 type Rss2JsonResponse = {
@@ -24,7 +25,7 @@ function readingTime(text: string) {
 }
 
 async function fetchFeed(): Promise<Rss2JsonResponse> {
-  const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(profile.rssFeedUrl)}`;
+  const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(profile.rssFeedUrl)}&count=100`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`rss2json ${res.status}`);
   return res.json();
@@ -38,8 +39,39 @@ export function Articles() {
     retry: 1,
   });
 
-  const items = (data?.items ?? []).slice(0, 6);
+  const items = data?.items ?? [];
   const hasError = !!error || (data && data.status !== "ok");
+
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  const updateButtons = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setCanPrev(el.scrollLeft > 4);
+    setCanNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    updateButtons();
+    el.addEventListener("scroll", updateButtons, { passive: true });
+    window.addEventListener("resize", updateButtons);
+    return () => {
+      el.removeEventListener("scroll", updateButtons);
+      window.removeEventListener("resize", updateButtons);
+    };
+  }, [updateButtons, items.length]);
+
+  const scrollByCards = (dir: 1 | -1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-article-card]");
+    const step = card ? card.offsetWidth + 16 : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step * 1.5, behavior: "smooth" });
+  };
 
   return (
     <section id="articles" className="border-b border-border py-24 sm:py-32">
@@ -62,9 +94,12 @@ export function Articles() {
         </header>
 
         {isLoading && (
-          <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-48 animate-pulse-amber bg-background p-6">
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-56 w-[320px] shrink-0 animate-pulse-amber bg-surface p-6"
+              >
                 <div className="h-3 w-24 bg-surface-3" />
                 <div className="mt-4 h-5 w-3/4 bg-surface-3" />
                 <div className="mt-2 h-5 w-2/3 bg-surface-3" />
@@ -86,36 +121,68 @@ export function Articles() {
         )}
 
         {!isLoading && !hasError && items.length > 0 && (
-          <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-3">
-            {items.map((it) => {
-              const desc = stripHtml(it.description);
-              return (
-                <a
-                  key={it.link}
-                  href={it.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex flex-col justify-between bg-background p-6 transition-colors hover:bg-surface"
+          <div className="relative">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                {items.length} {items.length === 1 ? "post" : "posts"} — scroll →
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => scrollByCards(-1)}
+                  disabled={!canPrev}
+                  aria-label="Scroll left"
+                  className="flex h-9 w-9 items-center justify-center border border-border bg-surface text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground"
                 >
-                  <div>
-                    <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                      <time dateTime={it.pubDate}>
-                        {new Date(it.pubDate).toISOString().slice(0, 10)}
-                      </time>
-                      <span>{readingTime(desc)} min</span>
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollByCards(1)}
+                  disabled={!canNext}
+                  aria-label="Scroll right"
+                  className="flex h-9 w-9 items-center justify-center border border-border bg-surface text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={scrollerRef}
+              className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-color:hsl(var(--primary))_transparent] [scrollbar-width:thin] sm:-mx-6 sm:px-6"
+            >
+              {items.map((it) => {
+                const desc = stripHtml(it.description);
+                return (
+                  <a
+                    key={it.link}
+                    data-article-card
+                    href={it.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex w-[300px] shrink-0 snap-start flex-col justify-between border border-border bg-background p-6 transition-colors hover:border-primary hover:bg-surface sm:w-[360px]"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                        <time dateTime={it.pubDate}>
+                          {new Date(it.pubDate).toISOString().slice(0, 10)}
+                        </time>
+                        <span>{readingTime(desc)} min</span>
+                      </div>
+                      <h3 className="mt-3 line-clamp-3 font-display text-xl font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
+                        {it.title}
+                      </h3>
+                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{desc}</p>
                     </div>
-                    <h3 className="mt-3 font-display text-xl font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
-                      {it.title}
-                    </h3>
-                    <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{desc}</p>
-                  </div>
-                  <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    <span>read</span>
-                    <ExternalLink className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                </a>
-              );
-            })}
+                    <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                      <span>read</span>
+                      <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
           </div>
         )}
 
