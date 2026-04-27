@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { profile } from "@/data/portfolio";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const sections = [
   { id: "about", label: "about" },
@@ -77,12 +78,15 @@ export function TopNav() {
           ))}
         </ul>
 
-        <a
-          href={profile.resumeUrl}
-          className="hidden items-center gap-2 border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex"
-        >
-          <span className="text-primary">$</span> resume.pdf
-        </a>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <a
+            href={profile.resumeUrl}
+            className="hidden items-center gap-2 border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex"
+          >
+            <span className="text-primary">$</span> resume.pdf
+          </a>
+        </div>
       </div>
     </nav>
   );
