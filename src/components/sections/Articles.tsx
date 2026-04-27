@@ -161,22 +161,24 @@ export function Articles() {
               </div>
             </div>
 
-            <div
-              ref={scrollerRef}
-              className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-color:hsl(var(--primary))_transparent] [scrollbar-width:thin] sm:-mx-6 sm:px-6"
-            >
-              {items.map((it) => {
-                const desc = stripHtml(it.description);
-                const img = extractImage(it);
-                return (
-                  <a
-                    key={it.link}
-                    data-article-card
-                    href={it.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group flex w-[300px] shrink-0 snap-start flex-col border border-border bg-background transition-colors hover:border-primary hover:bg-surface sm:w-[360px]"
-                  >
+            <div className="edge-fade-x">
+              <div
+                ref={scrollerRef}
+                className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-color:hsl(var(--primary))_transparent] [scrollbar-width:thin] sm:-mx-6 sm:px-6"
+              >
+                {items.map((it, idx) => {
+                  const desc = stripHtml(it.description);
+                  const img = extractImage(it);
+                  return (
+                    <a
+                      key={it.link}
+                      data-article-card
+                      href={it.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ animationDelay: `${idx * 80}ms` }}
+                      className="lift-card animate-fade-in group flex w-[300px] shrink-0 snap-start flex-col border border-border bg-background transition-colors hover:border-primary hover:bg-surface sm:w-[360px]"
+                    >
                     <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-surface-3">
                       {img ? (
                         <img
