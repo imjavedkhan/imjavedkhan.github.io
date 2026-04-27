@@ -136,7 +136,7 @@ export function Projects() {
                   </div>
                 </div>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
