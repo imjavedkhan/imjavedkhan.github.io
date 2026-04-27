@@ -25,28 +25,38 @@ export function Hero() {
 
       {/* Centerpiece */}
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
-        <p className="kicker-amber animate-fade-in">// senior backend engineer</p>
-        <h1 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-7xl md:text-[8.5rem] animate-fade-in">
-          <span className="block">BACKEND.</span>
-          <span className="block">DISTRIBUTED.</span>
-          <span className="block text-primary">CORRECT<span className="text-foreground">.</span></span>
+        <p className="kicker-amber animate-fade-in" style={{ animationDelay: "100ms" }}>
+          // senior backend engineer
+        </p>
+        <h1 className="word-fade mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-7xl md:text-[8.5rem]">
+          <span className="block" style={{ animationDelay: "200ms" }}>BACKEND.</span>
+          <span className="block" style={{ animationDelay: "400ms" }}>DISTRIBUTED.</span>
+          <span className="block text-primary" style={{ animationDelay: "600ms" }}>
+            CORRECT<span className="text-foreground">.</span>
+          </span>
         </h1>
 
         <div className="mt-10 grid gap-6 md:grid-cols-[2fr,1fr] md:items-end">
-          <p className="max-w-xl font-body text-base text-muted-foreground sm:text-lg text-pretty animate-fade-in">
+          <p
+            className="max-w-xl animate-fade-in font-body text-base text-muted-foreground sm:text-lg text-pretty"
+            style={{ animationDelay: "900ms" }}
+          >
             <span className="font-mono text-primary">{profile.name}</span> — {profile.tagline}
           </p>
 
-          <div className="flex flex-wrap gap-3 md:justify-end">
+          <div
+            className="flex animate-fade-in flex-wrap gap-3 md:justify-end"
+            style={{ animationDelay: "1100ms" }}
+          >
             <a
               href={profile.resumeUrl}
-              className="inline-flex items-center gap-2 border border-primary bg-primary px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-primary-glow"
+              className="group inline-flex items-center gap-2 border border-primary bg-primary px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-primary-foreground transition-all duration-300 hover:bg-primary-glow hover:shadow-[0_0_24px_-4px_hsl(var(--primary)/0.7)] hover:-translate-y-0.5"
             >
               <span>./resume.pdf</span>
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 border border-border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary hover:text-primary"
+              className="inline-flex items-center gap-2 border border-border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary"
             >
               <span className="text-primary">$</span> ./contact
             </a>
@@ -54,7 +64,7 @@ export function Hero() {
               href={profile.github}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 border border-border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-foreground transition-colors hover:border-primary hover:text-primary"
+              className="inline-flex items-center gap-2 border border-border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.2em] text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:text-primary"
             >
               gh: {profile.github.split("/").pop()}
             </a>
