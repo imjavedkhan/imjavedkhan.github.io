@@ -216,7 +216,8 @@ export function Articles() {
                     </div>
                   </a>
                 );
-              })}
+                })}
+              </div>
             </div>
           </div>
         )}
