@@ -2,6 +2,8 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { ExternalLink, Github } from "lucide-react";
 import { projects } from "@/data/portfolio";
 import { MermaidDiagram } from "../MermaidDiagram";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeader } from "@/components/SectionHeader";
 
 // Engine Room — custom Prism theme (amber on slate)
 const theme: Record<string, React.CSSProperties> = {
@@ -36,19 +38,18 @@ export function Projects() {
   return (
     <section id="work" className="border-b border-border py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <header className="mb-12 grid gap-4 md:grid-cols-[200px,1fr] md:items-baseline">
-          <p className="kicker-amber">// 04 / work</p>
-          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-            Selected work. <span className="text-muted-foreground">Diagrams + the interesting bit.</span>
-          </h2>
-        </header>
+        <SectionHeader kicker="// 04 / work">
+          Selected work. <span className="text-muted-foreground">Diagrams + the interesting bit.</span>
+        </SectionHeader>
 
         <div className="space-y-12">
           {projects.map((p, i) => (
-            <article
+            <Reveal
+              as="article"
               key={p.slug}
-              className="panel-strong"
-              aria-labelledby={`p-${p.slug}-title`}
+              variant="up"
+              delay={i * 60}
+              className="panel-strong lift-card"
             >
               {/* Header bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -135,7 +136,7 @@ export function Projects() {
                   </div>
                 </div>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>

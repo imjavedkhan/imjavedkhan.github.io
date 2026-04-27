@@ -85,16 +85,19 @@ export function TopNav() {
             <li key={s.id}>
               <a
                 href={`#${s.id}`}
-                className={`relative px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
+                className={`group relative px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
                   active === s.id
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {s.label}
-                {active === s.id && (
-                  <span className="absolute inset-x-3 -bottom-px h-px bg-primary" aria-hidden="true" />
-                )}
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-x-3 -bottom-px h-px origin-center bg-primary transition-transform duration-300 ${
+                    active === s.id ? "scale-x-100" : "scale-x-0 group-hover:scale-x-50"
+                  }`}
+                />
               </a>
             </li>
           ))}
@@ -129,8 +132,14 @@ export function TopNav() {
         }`}
       >
         <ul className="flex flex-col px-4 py-3 sm:px-6">
-          {sections.map((s) => (
-            <li key={s.id}>
+          {sections.map((s, idx) => (
+            <li
+              key={s.id}
+              className={`transition-all duration-300 ${
+                open ? "translate-x-0 opacity-100" : "-translate-x-3 opacity-0"
+              }`}
+              style={{ transitionDelay: open ? `${idx * 40}ms` : "0ms" }}
+            >
               <a
                 href={`#${s.id}`}
                 onClick={() => setOpen(false)}
