@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { profile } from "@/data/portfolio";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeader } from "@/components/SectionHeader";
 
 type Line = { kind: "in" | "out" | "err" | "ok"; text: string };
 
