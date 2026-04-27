@@ -25,7 +25,7 @@ function readingTime(text: string) {
 }
 
 async function fetchFeed(): Promise<Rss2JsonResponse> {
-  const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(profile.rssFeedUrl)}&count=100`;
+  const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(profile.rssFeedUrl)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`rss2json ${res.status}`);
   return res.json();
