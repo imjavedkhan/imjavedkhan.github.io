@@ -1,4 +1,6 @@
 import { TopNav } from "@/components/TopNav";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { BackToTop } from "@/components/BackToTop";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Skills } from "@/components/sections/Skills";
@@ -13,6 +15,7 @@ import { Footer } from "@/components/sections/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ScrollProgress />
       <TopNav />
       <main>
         <Hero />
@@ -26,6 +29,7 @@ const Index = () => {
         <Contact />
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 };
