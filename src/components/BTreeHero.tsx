@@ -9,8 +9,20 @@ import * as THREE from "three";
 // ============================================================
 
 const AMBER = new THREE.Color("#F59E0B");
-const SLATE = new THREE.Color("#3F3F46");
-const SURFACE = new THREE.Color("#18181B");
+
+function readThemeColors() {
+  if (typeof window === "undefined") {
+    return { slate: new THREE.Color("#3F3F46"), surface: new THREE.Color("#18181B"), fog: "#0A0A0B" };
+  }
+  const isLight = document.documentElement.classList.contains("light");
+  return isLight
+    ? { slate: new THREE.Color("#A1A1AA"), surface: new THREE.Color("#FFFFFF"), fog: "#F5F2EC" }
+    : { slate: new THREE.Color("#3F3F46"), surface: new THREE.Color("#18181B"), fog: "#0A0A0B" };
+}
+
+let themeColors = readThemeColors();
+const SLATE = themeColors.slate;
+const SURFACE = themeColors.surface;
 
 type NodeDef = {
   id: string;
@@ -242,6 +254,9 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
 export function BTreeHero() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [reduced, setReduced] = useState(false);
+  const [themeKey, setThemeKey] = useState<string>(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("light") ? "light" : "dark",
+  );
 
   useEffect(() => {
     const m = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -249,6 +264,19 @@ export function BTreeHero() {
     const fn = () => setReduced(m.matches);
     m.addEventListener("change", fn);
     return () => m.removeEventListener("change", fn);
+  }, []);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const next = document.documentElement.classList.contains("light") ? "light" : "dark";
+      setThemeKey(next);
+      const c = readThemeColors();
+      themeColors = c;
+      SLATE.copy(c.slate);
+      SURFACE.copy(c.surface);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
   }, []);
 
   if (reduced) {
@@ -266,17 +294,18 @@ export function BTreeHero() {
       }}
     >
       <Canvas
+        key={themeKey}
         camera={{ position: [0, 0.4, 9.5], fov: 42 }}
         dpr={[1, 1.6]}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={0.35} />
+        <ambientLight intensity={themeKey === "light" ? 0.7 : 0.35} />
         <directionalLight position={[5, 6, 5]} intensity={0.6} color="#F59E0B" />
-        <directionalLight position={[-4, -3, 4]} intensity={0.25} color="#ffffff" />
+        <directionalLight position={[-4, -3, 4]} intensity={themeKey === "light" ? 0.5 : 0.25} color="#ffffff" />
         <Suspense fallback={null}>
           <Scene tilt={tilt} />
         </Suspense>
-        <fog attach="fog" args={["#0A0A0B", 8, 16]} />
+        <fog attach="fog" args={[themeColors.fog, 8, 16]} />
       </Canvas>
     </div>
   );
