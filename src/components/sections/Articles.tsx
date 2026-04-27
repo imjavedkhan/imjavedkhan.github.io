@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { profile } from "@/data/portfolio";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeader } from "@/components/SectionHeader";
 
 type Rss2JsonResponse = {
   status: string;
@@ -92,22 +94,17 @@ export function Articles() {
   return (
     <section id="articles" className="border-b border-border py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <header className="mb-12 grid gap-4 md:grid-cols-[200px,1fr] md:items-baseline">
-          <p className="kicker-amber">// 05 / articles</p>
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-              Writing. <span className="text-muted-foreground">Notes from production.</span>
-            </h2>
-            <a
-              href={profile.rssFeedUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-primary"
-            >
-              rss ↗
-            </a>
-          </div>
-        </header>
+        <SectionHeader kicker="// 05 / articles">
+          Writing. <span className="text-muted-foreground">Notes from production.</span>
+          <a
+            href={profile.rssFeedUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="ml-4 align-middle font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-primary"
+          >
+            rss ↗
+          </a>
+        </SectionHeader>
 
         {isLoading && (
           <div className="flex gap-4 overflow-hidden">
