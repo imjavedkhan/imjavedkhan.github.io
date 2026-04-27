@@ -11,12 +11,28 @@ type Rss2JsonResponse = {
     pubDate: string;
     link: string;
     description: string;
+    content?: string;
+    thumbnail?: string;
+    enclosure?: { link?: string; type?: string };
     categories?: string[];
   }[];
 };
 
 function stripHtml(s: string) {
   return s.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+}
+
+function extractImage(it: {
+  thumbnail?: string;
+  enclosure?: { link?: string };
+  content?: string;
+  description?: string;
+}): string | null {
+  if (it.thumbnail && /^https?:\/\//.test(it.thumbnail)) return it.thumbnail;
+  if (it.enclosure?.link && /^https?:\/\//.test(it.enclosure.link)) return it.enclosure.link;
+  const html = `${it.content ?? ""} ${it.description ?? ""}`;
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return m ? m[1] : null;
 }
 
 function readingTime(text: string) {
