@@ -88,25 +88,46 @@ function NodeMesh({
   active,
   onHover,
   pulse,
+  buildDelay,
+  buildStart,
 }: {
   node: NodeDef;
   active: boolean;
   onHover: (id: string | null) => void;
   pulse: number;
+  buildDelay: number;
+  buildStart: number;
 }) {
   const ref = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const matRef = useRef<THREE.MeshStandardMaterial>(null);
+  const buildDuration = 0.7;
 
   useFrame(({ clock }) => {
     if (!matRef.current) return;
     const t = clock.getElapsedTime();
+    const elapsed = Math.max(0, t - buildStart - buildDelay);
+    const p = Math.min(1, elapsed / buildDuration);
+    // ease-out cubic
+    const ease = 1 - Math.pow(1 - p, 3);
+
+    if (groupRef.current) {
+      groupRef.current.position.y = node.pos[1] + (1 - ease) * 3.5;
+      const s = ease;
+      groupRef.current.scale.setScalar(0.001 + s * 0.999);
+    }
+
     const breath = 0.5 + 0.5 * Math.sin(t * 1.2 + node.pos[0]);
-    const target = active ? 0.9 + pulse * 0.4 : 0.05 + breath * 0.05;
+    const baseEm = 0.05 + breath * 0.05;
+    // amber flash on land
+    const flash = p > 0 && p < 1 ? (1 - p) * 0.8 : 0;
+    const target = active ? 0.9 + pulse * 0.4 : baseEm + flash;
     matRef.current.emissiveIntensity = THREE.MathUtils.lerp(
       matRef.current.emissiveIntensity,
       target,
       0.1,
     );
+    matRef.current.opacity = ease;
     if (ref.current) {
       const s = active ? 1.15 : 1;
       ref.current.scale.x = THREE.MathUtils.lerp(ref.current.scale.x, s, 0.1);
@@ -116,7 +137,7 @@ function NodeMesh({
   });
 
   return (
-    <group position={node.pos}>
+    <group ref={groupRef} position={node.pos}>
       <mesh
         ref={ref}
         onPointerOver={(e: ThreeEvent<PointerEvent>) => {
@@ -133,6 +154,8 @@ function NodeMesh({
           emissiveIntensity={0.05}
           metalness={0.2}
           roughness={0.6}
+          transparent
+          opacity={0}
         />
       </mesh>
       {/* wireframe shell */}
@@ -149,11 +172,15 @@ function Edge({
   to,
   active,
   pulse,
+  buildDelay,
+  buildStart,
 }: {
   from: [number, number, number];
   to: [number, number, number];
   active: boolean;
   pulse: number;
+  buildDelay: number;
+  buildStart: number;
 }) {
   const ref = useRef<THREE.Line>(null);
   const geo = useMemo(() => {
@@ -164,18 +191,22 @@ function Edge({
     return g;
   }, [from, to]);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const mat = ref.current?.material as THREE.LineBasicMaterial | undefined;
     if (!mat) return;
-    const target = active ? 0.95 + pulse * 0.05 : 0.18;
-    mat.opacity = THREE.MathUtils.lerp(mat.opacity ?? 0.2, target, 0.1);
+    const t = clock.getElapsedTime();
+    const elapsed = Math.max(0, t - buildStart - buildDelay);
+    const p = Math.min(1, elapsed / 0.5);
+    const baseTarget = active ? 0.95 + pulse * 0.05 : 0.18;
+    const target = baseTarget * p;
+    mat.opacity = THREE.MathUtils.lerp(mat.opacity ?? 0, target, 0.15);
     mat.color.lerp(active ? AMBER : SLATE, 0.1);
   });
 
   return (
     // @ts-expect-error - r3f line primitive types
     <line ref={ref} geometry={geo}>
-      <lineBasicMaterial color={SLATE} transparent opacity={0.2} />
+      <lineBasicMaterial color={SLATE} transparent opacity={0} />
     </line>
   );
 }
@@ -186,23 +217,53 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   const [hovered, setHovered] = useState<string | null>(null);
   const [autoLeaf, setAutoLeaf] = useState<string | null>(null);
   const groupRef = useRef<THREE.Group>(null);
+  const buildStartRef = useRef<number>(0);
+  const startedRef = useRef(false);
 
-  // Idle auto-traversal: pick a random leaf every ~2.4s
+  // Compute build delays by depth (root → internal → leaf)
+  const buildDelays = useMemo(() => {
+    const map = new Map<string, number>();
+    nodes.forEach((n) => {
+      if (n.id === "r") map.set(n.id, 0);
+      else if (n.id.startsWith("i")) {
+        const i = Number(n.id.slice(1));
+        map.set(n.id, 0.35 + i * 0.12);
+      } else {
+        // l{i}_{j}
+        const [, i, j] = n.id.match(/l(\d+)_(\d+)/) ?? [];
+        map.set(n.id, 0.9 + Number(i) * 0.18 + Number(j) * 0.08);
+      }
+    });
+    return map;
+  }, [nodes]);
+
+  // Idle auto-traversal: pick a random leaf every ~2.4s (after build settles)
   useEffect(() => {
     const leaves = nodes.filter((n) => n.id.startsWith("l"));
-    const id = setInterval(() => {
-      const pick = leaves[Math.floor(Math.random() * leaves.length)];
-      setAutoLeaf(pick.id);
-    }, 2400);
-    return () => clearInterval(id);
+    const start = setTimeout(() => {
+      const id = setInterval(() => {
+        const pick = leaves[Math.floor(Math.random() * leaves.length)];
+        setAutoLeaf(pick.id);
+      }, 2400);
+      // store on element so cleanup works
+      (start as unknown as { _i?: number })._i = id as unknown as number;
+    }, 2800);
+    return () => {
+      clearTimeout(start);
+      const id = (start as unknown as { _i?: number })._i;
+      if (id) clearInterval(id);
+    };
   }, [nodes]);
 
   const highlight = pathTo(nodes, hovered ?? autoLeaf);
 
   useFrame(({ clock }) => {
+    if (!startedRef.current) {
+      buildStartRef.current = clock.getElapsedTime();
+      startedRef.current = true;
+    }
     if (!groupRef.current) return;
     const t = clock.getElapsedTime();
-    // base slow rotation + cursor tilt
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
       tilt.x * 0.4 + Math.sin(t * 0.15) * 0.1,
@@ -223,11 +284,12 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
 
   return (
     <group ref={groupRef} position={[0, -0.2, 0]}>
-      {/* edges first */}
+      {/* edges first - delayed slightly after both endpoints land */}
       {nodes.map((n) => {
         if (!n.parent) return null;
         const p = byId.get(n.parent)!;
         const active = highlight.has(n.id) && highlight.has(n.parent);
+        const edgeDelay = (buildDelays.get(n.id) ?? 0) + 0.25;
         return (
           <Edge
             key={`e-${n.id}`}
@@ -235,6 +297,8 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
             to={n.pos}
             active={active}
             pulse={pulseRef.current}
+            buildDelay={edgeDelay}
+            buildStart={buildStartRef.current}
           />
         );
       })}
@@ -245,6 +309,8 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
           active={highlight.has(n.id)}
           onHover={setHovered}
           pulse={pulseRef.current}
+          buildDelay={buildDelays.get(n.id) ?? 0}
+          buildStart={buildStartRef.current}
         />
       ))}
     </group>
