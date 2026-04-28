@@ -1,15 +1,40 @@
 import { ArrowDown } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { BTreeHero } from "../BTreeHero";
 import { profile } from "@/data/portfolio";
 
 export function Hero() {
+  const bgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      if (bgRef.current) {
+        // gentle parallax: background translates slower than scroll
+        bgRef.current.style.transform = `translate3d(0, ${y * 0.25}px, 0) scale(${1 + Math.min(y, 600) * 0.0002})`;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section
       id="top"
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden border-b border-border"
     >
-      {/* 3D background */}
-      <div className="pointer-events-auto absolute inset-0 -z-10">
+      {/* 3D background with parallax */}
+      <div ref={bgRef} className="pointer-events-auto absolute inset-0 -z-10 will-change-transform">
         <BTreeHero />
         {/* gradient veil so foreground text stays legible */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/10 to-background" />
