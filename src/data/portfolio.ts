@@ -5,29 +5,30 @@
 export const profile = {
   name: "Javed Ali Khan",
   initials: "JAK",
-  role: "Senior Backend Engineer",
-  tagline: "Distributed systems, low-latency services, durable storage.",
-  location: "Bengaluru, IN",
-  email: "hello@javedalikhan.dev",
-  github: "https://github.com/javed-ali-khan",
-  linkedin: "https://linkedin.com/in/javed-ali-khan",
-  twitter: "https://x.com/javedalikhan",
+  role: "Senior Software Engineer",
+  tagline: "Java, Spring Boot, microservices & cloud-native backends.",
+  location: "Noida, UP, IN",
+  email: "javedalikhan50@gmail.com",
+  phone: "+91 9140573711",
+  github: "https://github.com/imjavedkhan",
+  linkedin: "https://linkedin.com/in/javedalikhan",
+  twitter: "https://medium.com/@javedalikhan50",
   resumeUrl: "/resume.pdf",
-  rssFeedUrl: "https://medium.com/feed/@javedalikhan50", // change to any RSS feed
+  rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
 };
 
 export const stats = [
-  { label: "yrs shipping", value: "9+" },
-  { label: "services owned", value: "27" },
-  { label: "p99 cut", value: "62%" },
-  { label: "rps peak", value: "180k" },
+  { label: "yrs shipping", value: "6+" },
+  { label: "companies", value: "3" },
+  { label: "latency cut", value: "30%" },
+  { label: "java jump", value: "8→17" },
 ];
 
 export const aboutLines = [
-  "I build the parts of software you never see, the parts that don't get to crash.",
-  "Currently writing Go and Rust against Postgres, Kafka, and Kubernetes.",
-  "Previously: payments infra at scale, search ranking pipelines, durable queues.",
-  "I care about correctness under failure, observable systems, and code that ages well.",
+  "I build the parts of software you never see — the parts that don't get to crash.",
+  "Currently writing Java and Spring Boot against PostgreSQL, Redis, and the JVM at Gigaforce.",
+  "Previously: enterprise REST services at Cognizant and TCS, shipped via Jenkins CI/CD.",
+  "I care about clean APIs, observable systems, and code that survives the next migration.",
 ];
 
 export type SkillGroup = {
@@ -39,49 +40,45 @@ export const skills: SkillGroup[] = [
   {
     label: "languages",
     items: [
-      { name: "Go", level: 5 },
-      { name: "Rust", level: 4 },
-      { name: "Python", level: 4 },
-      { name: "TypeScript", level: 4 },
-      { name: "C", level: 3 },
+      { name: "Java", level: 5 },
+      { name: "Python", level: 3 },
+      { name: "SQL", level: 4 },
+      { name: "HTML", level: 3 },
+    ],
+  },
+  {
+    label: "frameworks",
+    items: [
+      { name: "Spring Boot", level: 5 },
+      { name: "Microservices", level: 5 },
+      { name: "Hibernate", level: 4 },
+      { name: "REST APIs", level: 5 },
     ],
   },
   {
     label: "datastores",
     items: [
       { name: "PostgreSQL", level: 5 },
-      { name: "Redis", level: 5 },
-      { name: "Cassandra", level: 4 },
-      { name: "ClickHouse", level: 3 },
-      { name: "RocksDB", level: 3 },
+      { name: "Redis", level: 4 },
+      { name: "SQL", level: 4 },
     ],
   },
   {
-    label: "messaging",
+    label: "cloud",
     items: [
-      { name: "Kafka", level: 5 },
-      { name: "NATS", level: 4 },
-      { name: "RabbitMQ", level: 4 },
-      { name: "gRPC", level: 5 },
+      { name: "AWS", level: 4 },
+      { name: "Azure", level: 4 },
+      { name: "Cloud Computing", level: 4 },
     ],
   },
   {
-    label: "infra",
+    label: "devops",
     items: [
-      { name: "Kubernetes", level: 5 },
-      { name: "Terraform", level: 4 },
-      { name: "AWS", level: 5 },
-      { name: "GCP", level: 3 },
-      { name: "Linux", level: 5 },
-    ],
-  },
-  {
-    label: "observability",
-    items: [
-      { name: "Prometheus", level: 5 },
-      { name: "OpenTelemetry", level: 5 },
-      { name: "Grafana", level: 5 },
-      { name: "Jaeger", level: 4 },
+      { name: "Docker", level: 4 },
+      { name: "Jenkins", level: 4 },
+      { name: "CI/CD", level: 5 },
+      { name: "Git", level: 5 },
+      { name: "Agile", level: 5 },
     ],
   },
 ];
@@ -97,40 +94,44 @@ export type Experience = {
 
 export const experience: Experience[] = [
   {
-    company: "Stratus Labs",
-    role: "Staff Backend Engineer",
-    range: "2023 — present",
-    location: "Remote",
+    company: "Gigaforce",
+    role: "Senior Software Engineer",
+    range: "Apr 2023 — present",
+    location: "Noida",
     bullets: [
-      "feat(payments): cut p99 settlement from 1.4s → 530ms",
-      "perf(kafka): rebalanced partitions, +3.4x throughput",
-      "chore(infra): migrated 18 services to gRPC + mTLS",
+      "feat(auth): migrated microservices Java 8 → 17, refactored Spring Boot auth modules",
+      "perf(redis): added caching + token verification, -30% response time",
+      "feat(sso): integrated Salesforce SSO across platforms",
+      "chore(infra): containerized microservices and databases for deployment",
+      "docs(api): wrote technical specs and optimized DB + API models for scale",
     ],
-    stack: ["Go", "Kafka", "Postgres", "K8s"],
+    stack: ["Java 17", "Spring Boot", "Redis", "PostgreSQL", "Docker"],
   },
   {
-    company: "Northwind Search",
-    role: "Senior Backend Engineer",
-    range: "2020 — 2023",
-    location: "Bengaluru",
+    company: "Cognizant",
+    role: "Software Engineer",
+    range: "Sep 2022 — Mar 2023",
+    location: "Noida",
     bullets: [
-      "feat(ranking): online learning loop, +11% CTR",
-      "feat(index): hot-shard rebalancer, zero-downtime",
-      "fix(query): bounded tail latency under p999",
+      "feat(api): built and deployed Spring Boot REST APIs to customer spec",
+      "chore(cicd): supported builds and deployments across environments",
+      "fix(review): contributed to code reviews, bug fixes, and perf improvements",
+      "docs(agile): active in sprint planning and retrospectives",
     ],
-    stack: ["Rust", "Cassandra", "ClickHouse"],
+    stack: ["Java", "Spring Boot", "REST", "Git"],
   },
   {
-    company: "Indigo Cloud",
-    role: "Backend Engineer",
-    range: "2017 — 2020",
-    location: "Bengaluru",
+    company: "Tata Consultancy Services",
+    role: "Developer",
+    range: "Jun 2019 — Aug 2022",
+    location: "Pune",
     bullets: [
-      "feat(queue): durable job runner, exactly-once semantics",
-      "feat(billing): metering pipeline, 30B events/mo",
-      "docs(rfc): authored internal storage design RFC",
+      "feat(api): designed and shipped Spring Boot REST APIs to industry standards",
+      "chore(jenkins): delivered user stories to prod via Jenkins CI/CD pipelines",
+      "fix(rca): root-cause analysis on production defects, drove reliability up",
+      "docs(sdlc): owned design → dev → perf testing → release end-to-end",
     ],
-    stack: ["Python", "Postgres", "Redis"],
+    stack: ["Java", "Spring Boot", "Jenkins", "SQL"],
   },
 ];
 
@@ -148,118 +149,119 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "ledger",
-    title: "ledger-core",
+    slug: "auth-service",
+    title: "auth-service",
     summary:
-      "Append-only double-entry ledger with deterministic replay and snapshots. Powers fees, payouts, and reconciliation for a fintech.",
-    stack: ["Go", "Postgres", "Kafka", "gRPC"],
+      "Spring Boot authentication & authorization service migrated from Java 8 to Java 17. Adds Redis-backed token verification and Salesforce SSO across platforms.",
+    stack: ["Java 17", "Spring Boot", "Redis", "PostgreSQL"],
     metrics: [
-      { label: "tx/s", value: "42k" },
-      { label: "p99", value: "8ms" },
-      { label: "uptime", value: "99.99%" },
+      { label: "latency cut", value: "30%" },
+      { label: "java", value: "17" },
+      { label: "sso", value: "salesforce" },
     ],
     diagram: `flowchart LR
-  A[client] -->|gRPC| B[api]
-  B --> C[(write log)]
-  C --> D{partitioner}
-  D --> E[shard-0]
-  D --> F[shard-1]
-  D --> G[shard-n]
-  E --> H[(snapshot)]
-  F --> H
-  G --> H
-  H --> I[reader]`,
+  U[client] -->|JWT| G[api gateway]
+  G --> A[auth-service]
+  A --> R[(redis cache)]
+  A --> P[(postgres)]
+  A -->|SAML| S[salesforce sso]
+  A --> M[metrics]`,
     code: {
-      lang: "go",
-      title: "ledger/append.go",
-      body: `func (l *Ledger) Append(ctx context.Context, e Entry) (Offset, error) {
-    if err := e.Validate(); err != nil {
-        return 0, fmt.Errorf("validate: %w", err)
+      lang: "java",
+      title: "AuthService.java",
+      body: `@Service
+public class AuthService {
+    private final RedisTemplate<String, String> redis;
+    private final JwtParser parser;
+
+    public Authentication verify(String token) {
+        String cached = redis.opsForValue().get("tok:" + token);
+        if (cached != null) return Authentication.of(cached);
+
+        Claims claims = parser.parseClaimsJws(token).getBody();
+        redis.opsForValue().set("tok:" + token, claims.getSubject(),
+                Duration.ofMinutes(5));
+        return Authentication.of(claims.getSubject());
     }
-    seg := l.activeSegment()
-    off, err := seg.WriteAtomic(ctx, e)
-    if err != nil {
-        return 0, l.failover(ctx, err)
-    }
-    l.metrics.Appended.Inc()
-    return off, nil
 }`,
     },
-    repo: "https://github.com/javed-ali-khan/ledger-core",
+    repo: "https://github.com/imjavedkhan",
   },
   {
-    slug: "streamhouse",
-    title: "streamhouse",
+    slug: "microservices-platform",
+    title: "microservices-platform",
     summary:
-      "Real-time analytics layer over Kafka + ClickHouse with backpressure, exactly-once writes, and SQL-style streaming joins.",
-    stack: ["Rust", "Kafka", "ClickHouse"],
+      "Containerized Spring Boot microservices platform with REST APIs, optimized data models, and database-backed scalability. Deployed via Docker.",
+    stack: ["Java", "Spring Boot", "Docker", "PostgreSQL"],
     metrics: [
-      { label: "events/s", value: "180k" },
-      { label: "lag p95", value: "120ms" },
-      { label: "loss", value: "0" },
+      { label: "services", value: "12+" },
+      { label: "uptime", value: "99.9%" },
+      { label: "deploy", value: "docker" },
     ],
     diagram: `flowchart TB
-  K[(kafka)] --> P[parser]
-  P --> W[windower]
-  W --> J[joiner]
-  J --> S[(clickhouse)]
-  J --> M[metrics]`,
+  C[client] --> G[gateway]
+  G --> S1[orders-svc]
+  G --> S2[users-svc]
+  G --> S3[billing-svc]
+  S1 --> DB[(postgres)]
+  S2 --> DB
+  S3 --> DB
+  S1 --> R[(redis)]`,
     code: {
-      lang: "rust",
-      title: "src/window.rs",
-      body: `pub async fn window<S: Stream<Item = Event>>(
-    mut s: S,
-    size: Duration,
-) -> impl Stream<Item = Batch> {
-    try_stream! {
-        let mut buf = Vec::with_capacity(4096);
-        let mut deadline = Instant::now() + size;
-        while let Some(ev) = s.next().await {
-            buf.push(ev);
-            if Instant::now() >= deadline {
-                yield Batch::from(std::mem::take(&mut buf));
-                deadline = Instant::now() + size;
-            }
-        }
+      lang: "java",
+      title: "OrderController.java",
+      body: `@RestController
+@RequestMapping("/api/v1/orders")
+public class OrderController {
+    private final OrderService service;
+
+    @PostMapping
+    public ResponseEntity<OrderDto> create(@Valid @RequestBody OrderRequest req) {
+        Order saved = service.create(req);
+        return ResponseEntity
+                .created(URI.create("/api/v1/orders/" + saved.getId()))
+                .body(OrderDto.from(saved));
     }
 }`,
     },
-    repo: "https://github.com/javed-ali-khan/streamhouse",
+    repo: "https://github.com/imjavedkhan",
   },
   {
-    slug: "kvkit",
-    title: "kvkit",
+    slug: "cicd-pipeline",
+    title: "cicd-pipeline",
     summary:
-      "Embeddable LSM key-value store with bloom filters, leveled compaction, and a pluggable WAL. Educational + production-shaped.",
-    stack: ["Rust", "RocksDB-style", "no_std-friendly"],
+      "Jenkins-based CI/CD pipeline for Spring Boot services. Automates build, test, containerization, and rolling deploys to AWS / Azure.",
+    stack: ["Jenkins", "Docker", "AWS", "Azure"],
     metrics: [
-      { label: "writes/s", value: "310k" },
-      { label: "read p99", value: "0.6ms" },
-      { label: "WA", value: "4.2x" },
+      { label: "stories shipped", value: "200+" },
+      { label: "build time", value: "4m" },
+      { label: "rollback", value: "1-click" },
     ],
     diagram: `flowchart LR
-  W[write] --> M[memtable]
-  M -->|flush| L0[(L0 sstables)]
-  L0 --> L1[(L1)]
-  L1 --> L2[(L2)]
-  R[read] --> M
-  R --> L0
-  R --> L1
-  R --> L2`,
+  D[dev push] --> J[jenkins]
+  J --> T[unit tests]
+  T --> B[maven build]
+  B --> I[docker image]
+  I --> REG[(registry)]
+  REG --> K[deploy aws/azure]`,
     code: {
-      lang: "rust",
-      title: "src/memtable.rs",
-      body: `impl MemTable {
-    pub fn put(&self, k: Bytes, v: Bytes) {
-        self.map.insert(k.clone(), Entry::value(v));
-        self.size.fetch_add(k.len() as u64, Ordering::Relaxed);
+      lang: "groovy",
+      title: "Jenkinsfile",
+      body: `pipeline {
+  agent any
+  stages {
+    stage('Build') { steps { sh 'mvn -B clean package' } }
+    stage('Test')  { steps { sh 'mvn test' } }
+    stage('Image') {
+      steps { sh 'docker build -t app:\${BUILD_NUMBER} .' }
     }
-    pub fn get(&self, k: &[u8]) -> Option<Bytes> {
-        self.map.get(k).and_then(|e| e.value().clone())
+    stage('Deploy') {
+      steps { sh './deploy.sh \${BUILD_NUMBER}' }
     }
+  }
 }`,
     },
-    repo: "https://github.com/javed-ali-khan/kvkit",
+    repo: "https://github.com/imjavedkhan",
   },
 ];
 
@@ -272,16 +274,10 @@ export type EducationItem = {
 
 export const education: EducationItem[] = [
   {
-    school: "Indian Institute of Technology, Bombay",
+    school: "Galgotias University",
     degree: "B.Tech, Computer Science & Engineering",
-    range: "2013 — 2017",
-    notes: "Thesis on log-structured storage. ACM-ICPC regional finalist.",
-  },
-  {
-    school: "Coursera / Stanford",
-    degree: "Specialization — Algorithms & Distributed Systems",
-    range: "2019",
-    notes: "Audited graduate-level CS courses on consensus & scheduling.",
+    range: "2015 — 2019",
+    notes: "GPA: 7.5 / 10.",
   },
 ];
 
@@ -295,29 +291,23 @@ export type Certification = {
 
 export const certifications: Certification[] = [
   {
-    name: "AWS Certified Solutions Architect — Professional",
+    name: "Machine Learning Specialization",
+    issuer: "Coursera",
+    date: "—",
+  },
+  {
+    name: "Spring & Hibernate for Beginners",
+    issuer: "Udemy",
+    date: "—",
+  },
+  {
+    name: "Azure Fundamentals (AZ-900)",
+    issuer: "Microsoft",
+    date: "—",
+  },
+  {
+    name: "AWS Accreditation Certificate",
     issuer: "Amazon Web Services",
-    date: "2024",
-    credentialId: "AWS-SAP-118842",
-    url: "https://aws.amazon.com/verification",
-  },
-  {
-    name: "Certified Kubernetes Administrator (CKA)",
-    issuer: "CNCF / Linux Foundation",
-    date: "2023",
-    credentialId: "LF-CKA-7710",
-    url: "https://training.linuxfoundation.org/certification/verify/",
-  },
-  {
-    name: "HashiCorp Certified — Terraform Associate",
-    issuer: "HashiCorp",
-    date: "2022",
-    credentialId: "HC-TF-44291",
-  },
-  {
-    name: "Google Cloud Professional Cloud Architect",
-    issuer: "Google Cloud",
-    date: "2021",
-    credentialId: "GCP-PCA-22118",
+    date: "—",
   },
 ];
