@@ -154,6 +154,8 @@ function NodeMesh({
           emissiveIntensity={0.05}
           metalness={0.2}
           roughness={0.6}
+          transparent
+          opacity={0}
         />
       </mesh>
       {/* wireframe shell */}
