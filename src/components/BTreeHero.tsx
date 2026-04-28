@@ -88,25 +88,46 @@ function NodeMesh({
   active,
   onHover,
   pulse,
+  buildDelay,
+  buildStart,
 }: {
   node: NodeDef;
   active: boolean;
   onHover: (id: string | null) => void;
   pulse: number;
+  buildDelay: number;
+  buildStart: number;
 }) {
   const ref = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const matRef = useRef<THREE.MeshStandardMaterial>(null);
+  const buildDuration = 0.7;
 
   useFrame(({ clock }) => {
     if (!matRef.current) return;
     const t = clock.getElapsedTime();
+    const elapsed = Math.max(0, t - buildStart - buildDelay);
+    const p = Math.min(1, elapsed / buildDuration);
+    // ease-out cubic
+    const ease = 1 - Math.pow(1 - p, 3);
+
+    if (groupRef.current) {
+      groupRef.current.position.y = node.pos[1] + (1 - ease) * 3.5;
+      const s = ease;
+      groupRef.current.scale.setScalar(0.001 + s * 0.999);
+    }
+
     const breath = 0.5 + 0.5 * Math.sin(t * 1.2 + node.pos[0]);
-    const target = active ? 0.9 + pulse * 0.4 : 0.05 + breath * 0.05;
+    const baseEm = 0.05 + breath * 0.05;
+    // amber flash on land
+    const flash = p > 0 && p < 1 ? (1 - p) * 0.8 : 0;
+    const target = active ? 0.9 + pulse * 0.4 : baseEm + flash;
     matRef.current.emissiveIntensity = THREE.MathUtils.lerp(
       matRef.current.emissiveIntensity,
       target,
       0.1,
     );
+    matRef.current.opacity = ease;
     if (ref.current) {
       const s = active ? 1.15 : 1;
       ref.current.scale.x = THREE.MathUtils.lerp(ref.current.scale.x, s, 0.1);
@@ -116,7 +137,7 @@ function NodeMesh({
   });
 
   return (
-    <group position={node.pos}>
+    <group ref={groupRef} position={node.pos}>
       <mesh
         ref={ref}
         onPointerOver={(e: ThreeEvent<PointerEvent>) => {
