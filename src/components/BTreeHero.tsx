@@ -240,18 +240,16 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   // Idle auto-traversal: pick a random leaf every ~2.4s (after build settles)
   useEffect(() => {
     const leaves = nodes.filter((n) => n.id.startsWith("l"));
-    const start = setTimeout(() => {
-      const id = setInterval(() => {
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    const startId = setTimeout(() => {
+      intervalId = setInterval(() => {
         const pick = leaves[Math.floor(Math.random() * leaves.length)];
         setAutoLeaf(pick.id);
       }, 2400);
-      // store on element so cleanup works
-      (start as unknown as { _i?: number })._i = id as unknown as number;
     }, 2800);
     return () => {
-      clearTimeout(start);
-      const id = (start as unknown as { _i?: number })._i;
-      if (id) clearInterval(id);
+      clearTimeout(startId);
+      if (intervalId) clearInterval(intervalId);
     };
   }, [nodes]);
 
