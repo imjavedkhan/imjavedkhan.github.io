@@ -274,6 +274,7 @@ export type EducationItem = {
   degree: string;
   range: string;
   notes?: string;
+  certificateUrl?: string; // optional link to degree/transcript certificate
 };
 
 export const education: EducationItem[] = [
@@ -282,6 +283,7 @@ export const education: EducationItem[] = [
     degree: "B.Tech, Computer Science & Engineering",
     range: "2015 — 2019",
     notes: "GPA: 7.5 / 10.",
+    certificateUrl: "https://example.com/galgotias-degree.pdf",
   },
 ];
 
@@ -298,20 +300,24 @@ export const certifications: Certification[] = [
     name: "Machine Learning Specialization",
     issuer: "Coursera",
     date: "—",
+    url: "https://www.coursera.org/account/accomplishments/specialization/your-id",
   },
   {
     name: "Spring & Hibernate for Beginners",
     issuer: "Udemy",
     date: "—",
+    url: "https://www.udemy.com/certificate/your-id",
   },
   {
     name: "Azure Fundamentals (AZ-900)",
     issuer: "Microsoft",
     date: "—",
+    url: "https://learn.microsoft.com/en-us/users/your-id/credentials/your-cred",
   },
   {
     name: "AWS Accreditation Certificate",
     issuer: "Amazon Web Services",
     date: "—",
+    url: "https://www.credly.com/badges/your-badge-id",
   },
 ];
