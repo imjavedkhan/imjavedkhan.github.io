@@ -68,7 +68,7 @@ export function Hero() {
         <p className="kicker-amber animate-fade-in" style={{ animationDelay: "100ms" }}>
           // senior backend engineer
         </p>
-        <h1 className="word-fade mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-7xl md:text-[8.5rem]">
+        <h1 className="word-fade mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-7xl lg:text-[8.5rem]">
           <span className="block" style={{ animationDelay: "200ms" }}>BACKEND.</span>
           <span className="block" style={{ animationDelay: "400ms" }}>DISTRIBUTED.</span>
           <span className="block text-primary" style={{ animationDelay: "600ms" }}>
