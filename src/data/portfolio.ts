@@ -17,6 +17,8 @@ export const profile = {
   rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
   // Toggle to show/hide the "Available for hire" badge in the Hero section.
   availableForHire: true,
+  // Customisable availability line shown inside the Hero badge (e.g. "Open to new roles").
+  availabilityText: "Open to new roles · remote or Noida/Delhi NCR",
 };
 
 export const stats = [
