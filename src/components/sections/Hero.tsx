@@ -50,6 +50,21 @@ export function Hero() {
 
       {/* Centerpiece */}
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
+        {profile.availableForHire && (
+          <a
+            href="#contact"
+            className="group mb-5 inline-flex w-fit animate-fade-in items-center gap-2.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.22em] text-primary backdrop-blur-sm transition-all duration-300 hover:border-primary hover:bg-primary/15 hover:shadow-[0_0_24px_-6px_hsl(var(--primary)/0.7)]"
+            style={{ animationDelay: "50ms" }}
+            aria-label="Available for hire — contact me"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+            </span>
+            <span>available for hire</span>
+            <span className="text-primary/60 transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+          </a>
+        )}
         <p className="kicker-amber animate-fade-in" style={{ animationDelay: "100ms" }}>
           // senior backend engineer
         </p>
