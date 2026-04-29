@@ -8,6 +8,19 @@ A single-page, dark-mode, brutalist portfolio for a senior backend engineer. Cod
 
 ---
 
+## ✦ Screenshots
+
+A quick tour of the four anchor sections. Drop the matching PNGs into `docs/screenshots/` (filenames listed below) and they'll render here on GitHub.
+
+| | |
+|---|---|
+| <img src="docs/screenshots/hero.png" alt="Hero section with 3D B-Tree animation and 'Available for hire' badge" width="100%" /> <br /> **Hero** — 3D B-Tree built with React Three Fiber, amber-on-slate type lockup, and the toggleable *“Available for hire”* status pill driven by `profile.availabilityText`. | <img src="docs/screenshots/education.png" alt="Education section showing degree cards with clickable certificate badges" width="100%" /> <br /> **Education** — Brutalist degree cards with hairline dividers and a `FileBadge` chip that opens the credential in a new tab when `certificateUrl` is set. |
+| <img src="docs/screenshots/certifications.png" alt="Certifications grid with external link indicators" width="100%" /> <br /> **Certifications** — Four-up grid (Coursera, Udemy, Azure, AWS). Each card is fully clickable with an `ExternalLink` glyph and a *“view credential ↗”* affordance. | <img src="docs/screenshots/contact.png" alt="Interactive terminal-style contact section" width="100%" /> <br /> **Contact** — Interactive terminal CLI styled like a shell prompt — try `help`, `email`, `github`, `linkedin`, or `resume` to navigate without leaving the keyboard. |
+
+> Tip: capture screenshots at **1440×900** with the browser in dark mode for a consistent look. Save them as PNG into `docs/screenshots/` using the exact filenames above.
+
+---
+
 ## ✦ Features
 
 - **3D B-Tree hero** — React Three Fiber scene with mouse-driven rotation, search-path traversal pulses, and a reduced-motion SVG fallback.
