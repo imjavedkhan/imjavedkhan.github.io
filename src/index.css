@@ -114,10 +114,12 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+    overflow-x: clip;
     font-family: "Inter", system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
     background-color: hsl(var(--background));
