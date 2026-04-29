@@ -15,6 +15,8 @@ export const profile = {
   twitter: "https://medium.com/@javedalikhan50",
   resumeUrl: "/resume.pdf",
   rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
+  // Toggle to show/hide the "Available for hire" badge in the Hero section.
+  availableForHire: true,
 };
 
 export const stats = [
