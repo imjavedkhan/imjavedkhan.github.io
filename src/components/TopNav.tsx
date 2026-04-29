@@ -80,7 +80,7 @@ export function TopNav() {
           <span className="text-muted-foreground transition-colors group-hover:text-primary">engine-room</span>
         </a>
 
-        <ul className="hidden items-center gap-1 md:flex">
+        <ul className="hidden items-center gap-1 lg:flex">
           {sections.map((s) => (
             <li key={s.id}>
               <a
@@ -107,7 +107,7 @@ export function TopNav() {
           <ThemeToggle />
           <a
             href={profile.resumeUrl}
-            className="hidden items-center gap-2 border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary hover:text-primary md:inline-flex"
+            className="hidden items-center gap-2 border border-border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary hover:text-primary lg:inline-flex"
           >
             <span className="text-primary">$</span> resume.pdf
           </a>
@@ -117,7 +117,7 @@ export function TopNav() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-nav"
-            className="inline-flex h-9 w-9 items-center justify-center border border-border text-foreground transition-colors hover:border-primary hover:text-primary md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center border border-border text-foreground transition-colors hover:border-primary hover:text-primary lg:hidden"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -127,7 +127,7 @@ export function TopNav() {
       {/* Mobile menu */}
       <div
         id="mobile-nav"
-        className={`md:hidden overflow-hidden border-t border-border bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-300 ease-in-out ${
+        className={`lg:hidden overflow-hidden border-t border-border bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-300 ease-in-out ${
           open ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
