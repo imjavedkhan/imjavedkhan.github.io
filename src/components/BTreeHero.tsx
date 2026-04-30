@@ -1,5 +1,5 @@
 import { Suspense, useMemo, useRef, useState, useEffect } from "react";
-import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 
 // ============================================================
@@ -315,9 +315,35 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   );
 }
 
+// Throttles render loop to a target FPS and pauses entirely when invisible.
+function FrameLimiter({ fps, active }: { fps: number; active: boolean }) {
+  const { invalidate, advance } = useThree((s) => ({ invalidate: s.invalidate, advance: s.advance }));
+  const lastRef = useRef(0);
+  useEffect(() => {
+    let raf = 0;
+    const interval = 1000 / fps;
+    const tick = (t: number) => {
+      raf = requestAnimationFrame(tick);
+      if (!active) return;
+      if (t - lastRef.current >= interval) {
+        lastRef.current = t;
+        advance(t / 1000, true);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [fps, active, advance, invalidate]);
+  return null;
+}
+
 export function BTreeHero() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [reduced, setReduced] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
+  const [visible, setVisible] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [themeKey, setThemeKey] = useState<string>(() =>
     typeof document !== "undefined" && document.documentElement.classList.contains("light") ? "light" : "dark",
   );
@@ -327,7 +353,37 @@ export function BTreeHero() {
     setReduced(m.matches);
     const fn = () => setReduced(m.matches);
     m.addEventListener("change", fn);
-    return () => m.removeEventListener("change", fn);
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onMobile = () => setIsMobile(mq.matches);
+    onMobile();
+    mq.addEventListener("change", onMobile);
+    return () => {
+      m.removeEventListener("change", fn);
+      mq.removeEventListener("change", onMobile);
+    };
+  }, []);
+
+  // Pause rendering when hero is off-screen or tab is hidden.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting && entry.intersectionRatio > 0.05),
+      { threshold: [0, 0.05, 0.5] },
+    );
+    io.observe(el);
+    const onVis = () => {
+      if (document.hidden) setVisible(false);
+      else {
+        const rect = el.getBoundingClientRect();
+        setVisible(rect.bottom > 0 && rect.top < window.innerHeight);
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, []);
 
   useEffect(() => {
@@ -347,8 +403,13 @@ export function BTreeHero() {
     return <StaticTree />;
   }
 
+  // Mobile: lower DPR, cap FPS at 30, no antialias. Desktop: 60fps, AA on.
+  const dpr: [number, number] = isMobile ? [1, 1.25] : [1, 1.6];
+  const targetFps = isMobile ? 30 : 60;
+
   return (
     <div
+      ref={containerRef}
       className="absolute inset-0"
       onPointerMove={(e) => {
         const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
@@ -360,9 +421,11 @@ export function BTreeHero() {
       <Canvas
         key={themeKey}
         camera={{ position: [0, 0.4, 9.5], fov: 42 }}
-        dpr={[1, 1.6]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={dpr}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: "high-performance" }}
+        frameloop="never"
       >
+        <FrameLimiter fps={targetFps} active={visible} />
         <ambientLight intensity={themeKey === "light" ? 0.7 : 0.35} />
         <directionalLight position={[5, 6, 5]} intensity={0.6} color="#F59E0B" />
         <directionalLight position={[-4, -3, 4]} intensity={themeKey === "light" ? 0.5 : 0.25} color="#ffffff" />
