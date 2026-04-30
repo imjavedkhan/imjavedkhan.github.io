@@ -157,13 +157,13 @@ function NodeMesh({
     <group ref={groupRef} position={node.pos}>
       <mesh
         ref={ref}
+        geometry={SHARED_NODE_GEOMETRY}
         onPointerOver={(e: ThreeEvent<PointerEvent>) => {
           e.stopPropagation();
           onHover(node.id);
         }}
         onPointerOut={() => onHover(null)}
       >
-        <boxGeometry args={[0.9, 0.5, 0.5]} />
         <meshStandardMaterial
           ref={matRef}
           color={SURFACE}
@@ -175,9 +175,8 @@ function NodeMesh({
           opacity={0}
         />
       </mesh>
-      {/* wireframe shell */}
-      <lineSegments>
-        <edgesGeometry args={[new THREE.BoxGeometry(0.92, 0.52, 0.52)]} />
+      {/* wireframe shell — shared edges geometry */}
+      <lineSegments geometry={SHARED_EDGES_GEOMETRY}>
         <lineBasicMaterial color={active ? AMBER : SLATE} transparent opacity={active ? 1 : 0.5} />
       </lineSegments>
     </group>
@@ -200,12 +199,19 @@ function Edge({
   buildStart: number;
 }) {
   const ref = useRef<THREE.Line>(null);
-  const geo = useMemo(() => {
-    const g = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(...from),
-      new THREE.Vector3(...to),
-    ]);
-    return g;
+
+  // Compute position + quaternion + scale once so a single shared
+  // unit-length line geometry can be reused across every edge.
+  const transform = useMemo(() => {
+    const a = new THREE.Vector3(...from);
+    const b = new THREE.Vector3(...to);
+    const dir = new THREE.Vector3().subVectors(b, a);
+    const length = dir.length() || 1;
+    const quat = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      dir.clone().normalize(),
+    );
+    return { position: a, quaternion: quat, scale: new THREE.Vector3(1, length, 1) };
   }, [from, to]);
 
   useFrame(({ clock }) => {
@@ -222,7 +228,13 @@ function Edge({
 
   return (
     // @ts-expect-error - r3f line primitive types
-    <line ref={ref} geometry={geo}>
+    <line
+      ref={ref}
+      geometry={SHARED_EDGE_LINE_GEOMETRY}
+      position={transform.position}
+      quaternion={transform.quaternion}
+      scale={transform.scale}
+    >
       <lineBasicMaterial color={SLATE} transparent opacity={0} />
     </line>
   );
