@@ -230,17 +230,17 @@ function Edge({
     mat.color.lerp(active ? AMBER : SLATE, 0.1);
   });
 
+  const LineEl = "line" as unknown as React.ElementType;
   return (
-    // @ts-expect-error - r3f line primitive maps to SVG line in JSX types
-    <line
-      ref={ref as never}
+    <LineEl
+      ref={ref}
       geometry={SHARED_EDGE_LINE_GEOMETRY}
       position={transform.position}
       quaternion={transform.quaternion}
       scale={transform.scale}
     >
       <lineBasicMaterial color={SLATE} transparent opacity={0} />
-    </line>
+    </LineEl>
   );
 }
 
