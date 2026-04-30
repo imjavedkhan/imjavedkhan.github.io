@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef, useState, useEffect } from "react";
+import { Suspense, useMemo, useRef, useState, useEffect, type ElementType } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -23,6 +23,23 @@ function readThemeColors() {
 let themeColors = readThemeColors();
 const SLATE = themeColors.slate;
 const SURFACE = themeColors.surface;
+
+// ============================================================
+// Shared GPU resources — created once, reused by every node/edge.
+// This minimizes GPU uploads, draw-call setup, and memory usage,
+// which matters most on mobile devices.
+// ============================================================
+const SHARED_NODE_GEOMETRY = new THREE.BoxGeometry(0.9, 0.5, 0.5);
+const SHARED_EDGES_GEOMETRY = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.92, 0.52, 0.52));
+// Single unit-length line geometry; per-edge transforms position/scale/rotate it.
+const SHARED_EDGE_LINE_GEOMETRY = (() => {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3),
+  );
+  return g;
+})();
 
 type NodeDef = {
   id: string;
@@ -140,13 +157,13 @@ function NodeMesh({
     <group ref={groupRef} position={node.pos}>
       <mesh
         ref={ref}
+        geometry={SHARED_NODE_GEOMETRY}
         onPointerOver={(e: ThreeEvent<PointerEvent>) => {
           e.stopPropagation();
           onHover(node.id);
         }}
         onPointerOut={() => onHover(null)}
       >
-        <boxGeometry args={[0.9, 0.5, 0.5]} />
         <meshStandardMaterial
           ref={matRef}
           color={SURFACE}
@@ -158,9 +175,8 @@ function NodeMesh({
           opacity={0}
         />
       </mesh>
-      {/* wireframe shell */}
-      <lineSegments>
-        <edgesGeometry args={[new THREE.BoxGeometry(0.92, 0.52, 0.52)]} />
+      {/* wireframe shell — shared edges geometry */}
+      <lineSegments geometry={SHARED_EDGES_GEOMETRY}>
         <lineBasicMaterial color={active ? AMBER : SLATE} transparent opacity={active ? 1 : 0.5} />
       </lineSegments>
     </group>
@@ -183,12 +199,23 @@ function Edge({
   buildStart: number;
 }) {
   const ref = useRef<THREE.Line>(null);
-  const geo = useMemo(() => {
-    const g = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(...from),
-      new THREE.Vector3(...to),
-    ]);
-    return g;
+
+  // Compute tuples once so a single shared unit-length line geometry
+  // can be reused across every edge (saves one BufferGeometry per edge).
+  const transform = useMemo(() => {
+    const a = new THREE.Vector3(...from);
+    const b = new THREE.Vector3(...to);
+    const dir = new THREE.Vector3().subVectors(b, a);
+    const length = dir.length() || 1;
+    const quat = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      dir.clone().normalize(),
+    );
+    return {
+      position: [a.x, a.y, a.z] as [number, number, number],
+      quaternion: [quat.x, quat.y, quat.z, quat.w] as [number, number, number, number],
+      scale: [1, length, 1] as [number, number, number],
+    };
   }, [from, to]);
 
   useFrame(({ clock }) => {
@@ -203,11 +230,17 @@ function Edge({
     mat.color.lerp(active ? AMBER : SLATE, 0.1);
   });
 
+  const LineEl = "line" as unknown as ElementType;
   return (
-    // @ts-expect-error - r3f line primitive types
-    <line ref={ref} geometry={geo}>
+    <LineEl
+      ref={ref}
+      geometry={SHARED_EDGE_LINE_GEOMETRY}
+      position={transform.position}
+      quaternion={transform.quaternion}
+      scale={transform.scale}
+    >
       <lineBasicMaterial color={SLATE} transparent opacity={0} />
-    </line>
+    </LineEl>
   );
 }
 
