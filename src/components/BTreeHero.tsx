@@ -200,8 +200,8 @@ function Edge({
 }) {
   const ref = useRef<THREE.Line>(null);
 
-  // Compute position + quaternion + scale once so a single shared
-  // unit-length line geometry can be reused across every edge.
+  // Compute tuples once so a single shared unit-length line geometry
+  // can be reused across every edge (saves one BufferGeometry per edge).
   const transform = useMemo(() => {
     const a = new THREE.Vector3(...from);
     const b = new THREE.Vector3(...to);
@@ -211,7 +211,11 @@ function Edge({
       new THREE.Vector3(0, 1, 0),
       dir.clone().normalize(),
     );
-    return { position: a, quaternion: quat, scale: new THREE.Vector3(1, length, 1) };
+    return {
+      position: [a.x, a.y, a.z] as [number, number, number],
+      quaternion: [quat.x, quat.y, quat.z, quat.w] as [number, number, number, number],
+      scale: [1, length, 1] as [number, number, number],
+    };
   }, [from, to]);
 
   useFrame(({ clock }) => {
@@ -227,9 +231,9 @@ function Edge({
   });
 
   return (
-    // @ts-expect-error - r3f line primitive types
+    // @ts-expect-error - r3f line primitive maps to SVG line in JSX types
     <line
-      ref={ref}
+      ref={ref as never}
       geometry={SHARED_EDGE_LINE_GEOMETRY}
       position={transform.position}
       quaternion={transform.quaternion}
