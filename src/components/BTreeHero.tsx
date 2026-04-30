@@ -230,7 +230,7 @@ function Edge({
     mat.color.lerp(active ? AMBER : SLATE, 0.1);
   });
 
-  const LineEl = "line" as unknown as React.ElementType;
+  const LineEl = "line" as unknown as ElementType;
   return (
     <LineEl
       ref={ref}
