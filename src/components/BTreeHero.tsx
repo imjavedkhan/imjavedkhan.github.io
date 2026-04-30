@@ -24,6 +24,23 @@ let themeColors = readThemeColors();
 const SLATE = themeColors.slate;
 const SURFACE = themeColors.surface;
 
+// ============================================================
+// Shared GPU resources — created once, reused by every node/edge.
+// This minimizes GPU uploads, draw-call setup, and memory usage,
+// which matters most on mobile devices.
+// ============================================================
+const SHARED_NODE_GEOMETRY = new THREE.BoxGeometry(0.9, 0.5, 0.5);
+const SHARED_EDGES_GEOMETRY = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.92, 0.52, 0.52));
+// Single unit-length line geometry; per-edge transforms position/scale/rotate it.
+const SHARED_EDGE_LINE_GEOMETRY = (() => {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute([0, 0, 0, 0, 1, 0], 3),
+  );
+  return g;
+})();
+
 type NodeDef = {
   id: string;
   pos: [number, number, number];
