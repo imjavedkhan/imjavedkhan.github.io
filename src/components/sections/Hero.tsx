@@ -1,6 +1,7 @@
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { BTreeHero } from "../BTreeHero";
+import { BTreeQueryPanel } from "../BTreeQueryPanel";
 import { profile } from "@/data/portfolio";
 
 export function Hero() {
