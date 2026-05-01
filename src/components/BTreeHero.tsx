@@ -1,6 +1,8 @@
 import { Suspense, useMemo, useRef, useState, useEffect, type ElementType } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
+import { buildTree, pathTo, type NodeDef } from "./btree/tree";
+import { subscribeQuery, getQueryState } from "./btree/queryStore";
 
 // ============================================================
 // 3D B-Tree visualization for the hero background.
