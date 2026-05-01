@@ -201,7 +201,10 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   const startedRef = useRef(false);
 
   // Subscribe to external query store (driven by BTreeQueryPanel).
-  useEffect(() => subscribeQuery(setQuery), []);
+  useEffect(() => {
+    const unsub = subscribeQuery(setQuery);
+    return () => { unsub(); };
+  }, []);
 
   // Compute build delays by depth (root → internal → leaf)
   const buildDelays = useMemo(() => {
