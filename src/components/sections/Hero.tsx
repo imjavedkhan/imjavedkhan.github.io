@@ -1,6 +1,7 @@
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { BTreeHero } from "../BTreeHero";
+import { BTreeQueryPanel } from "../BTreeQueryPanel";
 import { profile } from "@/data/portfolio";
 
 export function Hero() {
@@ -109,6 +110,14 @@ export function Hero() {
               gh: {profile.github.split("/").pop()}
             </a>
           </div>
+        </div>
+
+        {/* Interactive B-Tree query playground */}
+        <div
+          className="mt-10 animate-fade-in md:absolute md:bottom-24 md:left-6 md:mt-0 md:max-w-md"
+          style={{ animationDelay: "1300ms" }}
+        >
+          <BTreeQueryPanel />
         </div>
       </div>
 

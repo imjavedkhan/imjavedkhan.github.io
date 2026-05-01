@@ -1,70 +1,68 @@
-## The Engine Room — Senior Backend Engineer Portfolio
+# Live B-Tree Query Playground
 
-A single-page, dark-mode, brutalist portfolio with amber neon accents, a 3D B-Tree hero animation, and sections that treat code, diagrams, and logs as the primary visual language.
+Turn the hero's 3D B-Tree from a passive background into an interactive demo. Visitors type a number, watch the tree light up the exact search path root → internal → leaf, and see a backend-engineer-style readout: hop count, complexity, and a fake latency number that feels real.
 
----
+## What the user sees
 
-### Design system
+A small, terminal-styled panel sitting near the hero (bottom-left of the canvas, above the log ticker). It looks like:
 
-- **Theme**: Dark mode only. Slate/Zinc base (`#0A0A0B` background, `#18181B` surfaces, `#27272A` borders).
-- **Accent**: Amber `#F59E0B` (primary) with a softer amber-300 for hover states. Used sparingly — borders, single words, status dots, graph highlights.
-- **Typography**: JetBrains Mono for code/labels/numbers, Space Grotesk for display headings, Inter for body. Tight tracking, oversized headlines, lowercase brutalist labels (`// experience`, `> projects`).
-- **Layout**: Hard 12-col grid, visible hairline dividers, no rounded cards (1–2px radius max), generous whitespace, offset/asymmetric blocks, ASCII-style separators.
-- **Motion**: Restrained — fade/slide on scroll, monospace number counters, subtle cursor blink, no bouncy easing.
+```text
+┌─ btree.find(key) ──────────────────────────┐
+│  $ search >  [  73       ]  ↵             │
+│                                            │
+│  → root[42|97]    matched range            │
+│  → i1[40|70]      descend                  │
+│  → l1_2[73|84]    HIT  ✓                   │
+│                                            │
+│  3 hops · O(log n) · 0.41ms                │
+└────────────────────────────────────────────┘
+```
 
-### Hero — 3D B-Tree visualization
+As each step appears, the corresponding node and edge in the 3D scene pulse amber in sequence (not all at once like the current hover behavior). When the path completes, the leaf does a stronger flash to indicate "hit" or "miss."
 
-- React Three Fiber + drei scene rendered behind the headline.
-- A multi-level B-Tree (root → ~3 internal → ~9 leaf) built from instanced cubes/wireframes with amber edges on slate nodes.
-- **Mouse interaction**: tree slowly rotates toward cursor; hovering a node "highlights a search path" from root to that leaf with a glowing amber traversal pulse.
-- Idle behavior: occasional auto-traversal pulses simulating queries; node values flicker as monospace overlays.
-- Performance: instanced meshes, capped DPR, paused when offscreen, reduced-motion fallback to a static SVG B-Tree.
-- Foreground: huge headline ("BACKEND. DISTRIBUTED. CORRECT."), name, role, and three CTAs (`./resume.pdf`, `./contact`, `gh: javed-ali-khan`).
+## Behavior details
 
-### Sections (single page, in order)
+- **Input:** numeric, 1–3 digits. Enter or click `▶` to run.
+- **Hit vs miss:** each leaf already has a `v|v+11` label (a 2-key range). If the typed number falls inside *any* leaf's range → HIT on that leaf. Otherwise → MISS on the closest leaf.
+- **Animation:** path nodes light up one at a time with a ~250ms stagger. Edges along the path animate in sync (color ramp from slate → amber, opacity boost). Total reveal ~1s for a depth-3 tree.
+- **Latency readout:** deterministic-but-jittery — `0.3ms + hops * 0.05ms + small noise`. Sells the "real query" feel without lying.
+- **Try-me hints:** small "try: 17, 73, 105" chips below the input so visitors don't stare at an empty box.
+- **Pause idle traversal:** the existing 2.4s random-leaf auto-traversal pauses while the user is interacting (last query stays highlighted), then resumes after ~6s of inactivity.
 
-1. **Hero + B-Tree animation** — name, role, one-line tagline, CTAs, scroll hint.
-2. **About** — short bio in a "README.md" framed block, with a side panel of live-feel stats (years shipping, services owned, p99 wins). Monospace, no avatar bloat.
-3. **Skills matrix** — brutalist grid grouped by *Languages / Datastores / Infra / Messaging / Observability*. Each cell is a label + proficiency bar rendered as monospace blocks (`█████░░░`).
-4. **Experience timeline** — vertical timeline with company, role, dates, and 2–3 impact bullets formatted as commit-log entries (`feat(payments): cut p99 by 62%`).
-5. **Articles** — pulled live from an RSS feed via `rss2json` (you'll provide the feed URL — Medium, dev.to, personal blog, etc.). Cards show title, date, reading time, excerpt; cached in React Query, graceful empty/error states.
-6. **Education** — institution, degree, dates, brief notes. Compact two-column brutalist list.
-7. **Certifications** — grid of certs with issuer, date, credential ID/link, and a small verified badge.
-8. **Contact — terminal CLI** — interactive prompt accepting `help`, `email`, `github`, `linkedin`, `resume`, `clear`. Typed commands write to a fake stdout. Real `mailto:` and link launches under the hood.
-9. **Footer** — minimal: build hash, last-deployed timestamp, theme line, socials.
+## Responsive & accessibility
 
-### Navigation
+- **Mobile:** panel collapses into a single-line compact form (`[input] [▶] · 3 hops 0.41ms`) docked above the log ticker. The result list shows only the final line.
+- **Reduced motion:** path nodes still highlight, but instantly (no stagger). The static SVG fallback for `prefers-reduced-motion` gets a simple non-3D version of the same input that highlights SVG rects.
+- **Keyboard:** input is reachable via Tab, Enter submits, Esc clears.
+- **A11y:** `aria-live="polite"` region announces `"Found 73 in leaf l1_2 after 3 hops"`.
 
-- Fixed top nav: `JAK::engine-room` wordmark left, section anchors right (`about`, `skills`, `work`, `articles`, `contact`), all monospace lowercase. Active section highlighted with an amber underline driven by IntersectionObserver.
+## Visual style
 
-### Data & integrations
+Reuses the existing design system — no new colors. Mono font, hairline border, `bg-background/70 backdrop-blur-sm`, amber `--primary` accents. Matches the bottom log ticker's aesthetic so it feels like part of the same "engine room" UI rather than bolted on.
 
-- **RSS articles**: client-side fetch to `https://api.rss2json.com/v1/api.json?rss_url=<FEED>` wrapped in React Query (no key needed for public usage; we can swap to an edge function later if you want server caching or hit rate limits).
-- **Resume**: served as a static PDF from `/public/resume.pdf` (placeholder until you supply one).
-- **All other content** (bio, projects, experience, education, certs, skills) lives in typed TypeScript data files for easy editing.
+## Files to change
 
-### Tech choices
+- `src/components/BTreeHero.tsx`
+  - Lift the highlighted-path concept out of `Scene`'s local state into a small store (plain `useState` + a context, or a ref-based event emitter) so the new panel can drive it.
+  - Add `queryPath: string[]` and `queryStep: number` props to `Scene`. When set, override the `hovered`/`autoLeaf` highlight with a stepped reveal (only the first `queryStep` ids are active).
+  - Pause auto-traversal `setInterval` while a query is active.
+- `src/components/BTreeQueryPanel.tsx` *(new)*
+  - The terminal-styled UI: input, run button, hint chips, step list, latency readout.
+  - Owns the search algorithm: walks the same `buildTree()` structure, returns `{ path, hit, leafId }`.
+  - Drives the stepped reveal via a small `setTimeout` chain (or `requestAnimationFrame` loop) and exposes the current step to the 3D scene.
+- `src/components/sections/Hero.tsx`
+  - Mount `<BTreeQueryPanel />` inside the hero, positioned `absolute bottom-24 left-4` on desktop, full-width strip on mobile, with proper z-index above the gradient veil but below the log ticker.
 
-- Vite + React + TypeScript (existing stack).
-- Tailwind tokens extended with the new amber/slate palette and mono/display fonts.
-- `@react-three/fiber@^8.18` + `@react-three/drei@^9.122` + `three` for the B-Tree.
-- `@tanstack/react-query` (already installed) for the RSS feed.
-- Framer Motion for scroll/section transitions.
+## Technical notes
 
-### What I need from you (can be added after build)
+- The tree definition currently lives inside `BTreeHero.tsx` as a local `buildTree()` closure. Extract it to a tiny module (e.g. `src/components/btree/tree.ts`) exporting `buildTree()`, `pathTo()`, and a new `findKey(nodes, key)` so both the panel and the scene share one source of truth.
+- `findKey` walks parent → children using each node's label range. Since the tree is built deterministically, this is straightforward array filtering by `parent` id at each level, picking the child whose `[lo, hi]` window contains the key (or the nearest one for miss).
+- The panel ↔ scene bridge can be a lightweight `useSyncExternalStore` or just lifted state inside `BTreeHero`. Lifted state is simpler and fine here — only one consumer pair.
+- Frame budget: the existing `FrameLimiter` and visibility pausing already cap GPU work; adding stepped highlights costs essentially nothing extra.
+- The fake latency formula stays deterministic per `(key, depth)` so the same query always shows the same number — feels honest, not random.
 
-- RSS feed URL for the Articles section
-- Real bio copy, role title, location
-- Experience entries
-- Education + certifications list
-- Resume PDF
-- Social links (GitHub, LinkedIn, email, X)
+## Out of scope
 
-I'll seed everything with high-quality backend-engineer placeholders so the site looks complete on first load, and you can swap content in any text editor.
-
-### Out of scope for v1
-
-- Light mode (dark only, by design)
-- CMS / blog hosting (articles come from RSS)
-- Per-project detail pages
-- Backend / auth / database
+- Real persistence / saving recent queries.
+- Insert/delete operations on the tree (kept read-only — keeps the demo focused).
+- Sound effects (covered separately under idea #11 if you ever want it).
