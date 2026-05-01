@@ -195,9 +195,13 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
   const [hovered, setHovered] = useState<string | null>(null);
   const [autoLeaf, setAutoLeaf] = useState<string | null>(null);
+  const [query, setQuery] = useState(getQueryState);
   const groupRef = useRef<THREE.Group>(null);
   const buildStartRef = useRef<number>(0);
   const startedRef = useRef(false);
+
+  // Subscribe to external query store (driven by BTreeQueryPanel).
+  useEffect(() => subscribeQuery(setQuery), []);
 
   // Compute build delays by depth (root → internal → leaf)
   const buildDelays = useMemo(() => {
@@ -216,8 +220,11 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
     return map;
   }, [nodes]);
 
-  // Idle auto-traversal: pick a random leaf every ~2.4s (after build settles)
+  // Idle auto-traversal: pick a random leaf every ~2.4s.
+  // Suspended while the user is interacting via the query panel.
+  const queryActive = query.path.length > 0;
   useEffect(() => {
+    if (queryActive) return;
     const leaves = nodes.filter((n) => n.id.startsWith("l"));
     let intervalId: ReturnType<typeof setInterval> | null = null;
     const startId = setTimeout(() => {
@@ -230,9 +237,13 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
       clearTimeout(startId);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [nodes]);
+  }, [nodes, queryActive]);
 
-  const highlight = pathTo(nodes, hovered ?? autoLeaf);
+  // Query takes precedence: only the first `step` nodes of the query path
+  // are highlighted, producing a stepped reveal in sync with the panel.
+  const highlight = queryActive
+    ? new Set(query.path.slice(0, query.step))
+    : pathTo(nodes, hovered ?? autoLeaf);
 
   useFrame(({ clock }) => {
     if (!startedRef.current) {
