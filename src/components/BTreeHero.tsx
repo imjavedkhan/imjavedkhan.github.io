@@ -43,64 +43,8 @@ const SHARED_EDGE_LINE_GEOMETRY = (() => {
   return g;
 })();
 
-type NodeDef = {
-  id: string;
-  pos: [number, number, number];
-  parent?: string;
-  label: string;
-};
+// (NodeDef, buildTree, pathTo are imported from ./btree/tree)
 
-// Build a B-Tree-ish layout (3 levels: root, 3 internal, 9 leaf)
-function buildTree(): NodeDef[] {
-  const nodes: NodeDef[] = [];
-  // Root
-  nodes.push({ id: "r", pos: [0, 2.4, 0], label: "42|97" });
-
-  const internalY = 0.4;
-  const internalSpread = 4.2;
-  const internalCount = 3;
-  for (let i = 0; i < internalCount; i++) {
-    const x = (i - (internalCount - 1) / 2) * internalSpread;
-    const id = `i${i}`;
-    nodes.push({
-      id,
-      pos: [x, internalY, 0],
-      parent: "r",
-      label: `${10 + i * 30}|${20 + i * 30}`,
-    });
-  }
-
-  const leafY = -1.8;
-  const leafSpread = 1.55;
-  const leafPerInternal = 3;
-  for (let i = 0; i < internalCount; i++) {
-    const baseX = (i - (internalCount - 1) / 2) * internalSpread;
-    for (let j = 0; j < leafPerInternal; j++) {
-      const x = baseX + (j - 1) * leafSpread;
-      const id = `l${i}_${j}`;
-      const v = i * 30 + j * 7 + 3;
-      nodes.push({
-        id,
-        pos: [x, leafY, (j - 1) * 0.4],
-        parent: `i${i}`,
-        label: `${v}|${v + 11}`,
-      });
-    }
-  }
-  return nodes;
-}
-
-function pathTo(nodes: NodeDef[], id: string | null): Set<string> {
-  const set = new Set<string>();
-  if (!id) return set;
-  const byId = new Map(nodes.map((n) => [n.id, n]));
-  let cur: NodeDef | undefined = byId.get(id);
-  while (cur) {
-    set.add(cur.id);
-    cur = cur.parent ? byId.get(cur.parent) : undefined;
-  }
-  return set;
-}
 
 function NodeMesh({
   node,
