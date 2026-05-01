@@ -1,8 +1,6 @@
 import { Suspense, useMemo, useRef, useState, useEffect, type ElementType } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
-import { buildTree, pathTo, type NodeDef } from "./btree/tree";
-import { subscribeQuery, getQueryState } from "./btree/queryStore";
 
 // ============================================================
 // 3D B-Tree visualization for the hero background.
@@ -43,8 +41,64 @@ const SHARED_EDGE_LINE_GEOMETRY = (() => {
   return g;
 })();
 
-// (NodeDef, buildTree, pathTo are imported from ./btree/tree)
+type NodeDef = {
+  id: string;
+  pos: [number, number, number];
+  parent?: string;
+  label: string;
+};
 
+// Build a B-Tree-ish layout (3 levels: root, 3 internal, 9 leaf)
+function buildTree(): NodeDef[] {
+  const nodes: NodeDef[] = [];
+  // Root
+  nodes.push({ id: "r", pos: [0, 2.4, 0], label: "42|97" });
+
+  const internalY = 0.4;
+  const internalSpread = 4.2;
+  const internalCount = 3;
+  for (let i = 0; i < internalCount; i++) {
+    const x = (i - (internalCount - 1) / 2) * internalSpread;
+    const id = `i${i}`;
+    nodes.push({
+      id,
+      pos: [x, internalY, 0],
+      parent: "r",
+      label: `${10 + i * 30}|${20 + i * 30}`,
+    });
+  }
+
+  const leafY = -1.8;
+  const leafSpread = 1.55;
+  const leafPerInternal = 3;
+  for (let i = 0; i < internalCount; i++) {
+    const baseX = (i - (internalCount - 1) / 2) * internalSpread;
+    for (let j = 0; j < leafPerInternal; j++) {
+      const x = baseX + (j - 1) * leafSpread;
+      const id = `l${i}_${j}`;
+      const v = i * 30 + j * 7 + 3;
+      nodes.push({
+        id,
+        pos: [x, leafY, (j - 1) * 0.4],
+        parent: `i${i}`,
+        label: `${v}|${v + 11}`,
+      });
+    }
+  }
+  return nodes;
+}
+
+function pathTo(nodes: NodeDef[], id: string | null): Set<string> {
+  const set = new Set<string>();
+  if (!id) return set;
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  let cur: NodeDef | undefined = byId.get(id);
+  while (cur) {
+    set.add(cur.id);
+    cur = cur.parent ? byId.get(cur.parent) : undefined;
+  }
+  return set;
+}
 
 function NodeMesh({
   node,
@@ -195,16 +249,9 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
   const [hovered, setHovered] = useState<string | null>(null);
   const [autoLeaf, setAutoLeaf] = useState<string | null>(null);
-  const [query, setQuery] = useState(getQueryState);
   const groupRef = useRef<THREE.Group>(null);
   const buildStartRef = useRef<number>(0);
   const startedRef = useRef(false);
-
-  // Subscribe to external query store (driven by BTreeQueryPanel).
-  useEffect(() => {
-    const unsub = subscribeQuery(setQuery);
-    return () => { unsub(); };
-  }, []);
 
   // Compute build delays by depth (root → internal → leaf)
   const buildDelays = useMemo(() => {
@@ -223,11 +270,8 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
     return map;
   }, [nodes]);
 
-  // Idle auto-traversal: pick a random leaf every ~2.4s.
-  // Suspended while the user is interacting via the query panel.
-  const queryActive = query.path.length > 0;
+  // Idle auto-traversal: pick a random leaf every ~2.4s (after build settles)
   useEffect(() => {
-    if (queryActive) return;
     const leaves = nodes.filter((n) => n.id.startsWith("l"));
     let intervalId: ReturnType<typeof setInterval> | null = null;
     const startId = setTimeout(() => {
@@ -240,13 +284,9 @@ function Scene({ tilt }: { tilt: { x: number; y: number } }) {
       clearTimeout(startId);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [nodes, queryActive]);
+  }, [nodes]);
 
-  // Query takes precedence: only the first `step` nodes of the query path
-  // are highlighted, producing a stepped reveal in sync with the panel.
-  const highlight = queryActive
-    ? new Set(query.path.slice(0, query.step))
-    : pathTo(nodes, hovered ?? autoLeaf);
+  const highlight = pathTo(nodes, hovered ?? autoLeaf);
 
   useFrame(({ clock }) => {
     if (!startedRef.current) {
