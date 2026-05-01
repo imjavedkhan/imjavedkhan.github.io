@@ -111,6 +111,14 @@ export function Hero() {
             </a>
           </div>
         </div>
+
+        {/* Interactive B-Tree query playground */}
+        <div
+          className="mt-10 animate-fade-in md:absolute md:bottom-24 md:left-6 md:mt-0 md:max-w-md"
+          style={{ animationDelay: "1300ms" }}
+        >
+          <BTreeQueryPanel />
+        </div>
       </div>
 
       {/* bottom hairline log strip */}
