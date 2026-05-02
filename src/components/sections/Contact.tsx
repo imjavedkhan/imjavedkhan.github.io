@@ -129,6 +129,7 @@ export function Contact() {
 
           <div
             ref={wrapRef}
+            onClick={() => inputRef.current?.focus()}
             className="h-[420px] overflow-auto p-5 font-mono text-sm leading-relaxed"
           >
             {history.map((l, i) => (
