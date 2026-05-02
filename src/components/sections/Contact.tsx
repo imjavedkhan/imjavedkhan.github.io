@@ -116,7 +116,6 @@ export function Contact() {
         <Reveal
           variant="scale"
           className="code-frame glow-amber cursor-text"
-          {...({ onClick: () => inputRef.current?.focus() } as object)}
         >
           <div className="code-frame-header">
             <div className="flex items-center gap-2">
