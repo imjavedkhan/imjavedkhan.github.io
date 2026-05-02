@@ -9,7 +9,6 @@ export const profile = {
   tagline: "Java, Spring Boot, microservices & cloud-native backends.",
   location: "Noida, UP, IN",
   email: "javedalikhan50@gmail.com",
-  phone: "+91 9140573711",
   github: "https://github.com/imjavedkhan",
   linkedin: "https://linkedin.com/in/javedalikhan",
   twitter: "https://medium.com/@javedalikhan50",

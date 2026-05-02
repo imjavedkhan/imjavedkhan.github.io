@@ -116,7 +116,6 @@ export function Contact() {
         <Reveal
           variant="scale"
           className="code-frame glow-amber cursor-text"
-          {...({ onClick: () => inputRef.current?.focus() } as object)}
         >
           <div className="code-frame-header">
             <div className="flex items-center gap-2">
@@ -130,6 +129,7 @@ export function Contact() {
 
           <div
             ref={wrapRef}
+            onClick={() => inputRef.current?.focus()}
             className="h-[420px] overflow-auto p-5 font-mono text-sm leading-relaxed"
           >
             {history.map((l, i) => (
