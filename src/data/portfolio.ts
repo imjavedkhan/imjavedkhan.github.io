@@ -11,8 +11,8 @@ export const profile = {
   email: "javedalikhan50@gmail.com",
   github: "https://github.com/imjavedkhan",
   linkedin: "https://linkedin.com/in/javedalikhan",
-  twitter: "https://medium.com/@javedalikhan50",
-  resumeUrl: "/resume.pdf",
+  twitter: "https://x.com/ijavedalikhan",
+  resumeUrl: "https://drive.google.com/file/d/1wVNbhdN885fo1v1xes-Hqsm_wbFiuTgN/view?usp=sharing",
   rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
   // Toggle to show/hide the "Available for hire" badge in the Hero section.
   availableForHire: true,
@@ -104,7 +104,7 @@ export const experience: Experience[] = [
     bullets: [
       "feat(auth): migrated microservices Java 8 → 17, refactored Spring Boot auth modules",
       "perf(redis): added caching + token verification, -30% response time",
-      "feat(sso): integrated Salesforce SSO across platforms",
+      "feat(outlook): integrated Outlook Inbox API for incoming mail reading and responding",
       "chore(infra): containerized microservices and databases for deployment",
       "docs(api): wrote technical specs and optimized DB + API models for scale",
     ],
@@ -282,7 +282,7 @@ export const education: EducationItem[] = [
     degree: "B.Tech, Computer Science & Engineering",
     range: "2015 — 2019",
     notes: "GPA: 7.5 / 10.",
-    certificateUrl: "https://example.com/galgotias-degree.pdf",
+    certificateUrl: "https://drive.google.com/file/d/10nZlZ_4SSu5vmPB6oWxOME1--Oil0SXN/view?usp=sharing",
   },
 ];
 
@@ -299,24 +299,24 @@ export const certifications: Certification[] = [
     name: "Machine Learning Specialization",
     issuer: "Coursera",
     date: "—",
-    url: "https://www.coursera.org/account/accomplishments/specialization/your-id",
+    url: "https://coursera.org/share/17f6bf990beb99f79289f8b26cfe0582",
   },
   {
-    name: "Spring & Hibernate for Beginners",
+    name: "Spring Security",
     issuer: "Udemy",
     date: "—",
-    url: "https://www.udemy.com/certificate/your-id",
+    url: "https://drive.google.com/file/d/1pNsHVU-EDifRnbKPogNY8pZg87nxmN4m/view?usp=sharing",
   },
   {
     name: "Azure Fundamentals (AZ-900)",
     issuer: "Microsoft",
     date: "—",
-    url: "https://learn.microsoft.com/en-us/users/your-id/credentials/your-cred",
+    url: "https://www.credly.com/badges/ee435bb9-a31f-4a22-a6a3-91522f95cbaf/public_url",
   },
   {
     name: "AWS Accreditation Certificate",
     issuer: "Amazon Web Services",
     date: "—",
-    url: "https://www.credly.com/badges/your-badge-id",
+    url: "https://www.credly.com/badges/7289a2d7-a82b-403f-80f4-76f37f9e6b7b/public_url",
   },
 ];
