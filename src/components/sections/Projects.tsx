@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { ExternalLink, Github } from "lucide-react";
+import { ChevronRight, ExternalLink, Github } from "lucide-react";
 import { projects } from "@/data/portfolio";
 import { MermaidDiagram } from "../MermaidDiagram";
 import { Reveal } from "@/components/Reveal";
@@ -35,6 +36,8 @@ const theme: Record<string, React.CSSProperties> = {
 };
 
 export function Projects() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <section id="work" className="border-b border-border py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -53,9 +56,20 @@ export function Projects() {
             >
               {/* Header bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                <span>
-                  <span className="text-primary">project/{String(i + 1).padStart(2, "0")}</span> · {p.slug}
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  aria-expanded={openIndex === i}
+                  aria-controls={`p-${p.slug}-body`}
+                  className="flex items-center gap-2 text-left transition-colors hover:text-primary"
+                >
+                  <ChevronRight
+                    className={`h-3.5 w-3.5 transition-transform ${openIndex === i ? "rotate-90" : ""}`}
+                    aria-hidden="true"
+                  />
+                  <span className="text-primary">project/{String(i + 1).padStart(2, "0")}</span>
+                  <span>· {p.slug}</span>
+                </button>
                 <span className="flex items-center gap-3">
                   {p.metrics.map((m) => (
                     <span key={m.label}>
@@ -66,7 +80,8 @@ export function Projects() {
                 </span>
               </div>
 
-              <div className="grid gap-px bg-border md:grid-cols-2">
+              {openIndex === i && (
+              <div id={`p-${p.slug}-body`} className="grid gap-px bg-border md:grid-cols-2">
                 {/* Left: title + summary + stack + links */}
                 <div className="space-y-5 bg-background p-6 sm:p-8">
                   <div>
@@ -136,6 +151,7 @@ export function Projects() {
                   </div>
                 </div>
               </div>
+              )}
             </Reveal>
           ))}
         </div>
