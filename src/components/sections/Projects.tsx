@@ -56,9 +56,20 @@ export function Projects() {
             >
               {/* Header bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                <span>
-                  <span className="text-primary">project/{String(i + 1).padStart(2, "0")}</span> · {p.slug}
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  aria-expanded={openIndex === i}
+                  aria-controls={`p-${p.slug}-body`}
+                  className="flex items-center gap-2 text-left transition-colors hover:text-primary"
+                >
+                  <ChevronRight
+                    className={`h-3.5 w-3.5 transition-transform ${openIndex === i ? "rotate-90" : ""}`}
+                    aria-hidden="true"
+                  />
+                  <span className="text-primary">project/{String(i + 1).padStart(2, "0")}</span>
+                  <span>· {p.slug}</span>
+                </button>
                 <span className="flex items-center gap-3">
                   {p.metrics.map((m) => (
                     <span key={m.label}>
