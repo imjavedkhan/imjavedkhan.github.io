@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { ExternalLink, Github } from "lucide-react";
+import { ChevronRight, ExternalLink, Github } from "lucide-react";
 import { projects } from "@/data/portfolio";
 import { MermaidDiagram } from "../MermaidDiagram";
 import { Reveal } from "@/components/Reveal";
