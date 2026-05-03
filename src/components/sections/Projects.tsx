@@ -80,7 +80,8 @@ export function Projects() {
                 </span>
               </div>
 
-              <div className="grid gap-px bg-border md:grid-cols-2">
+              {openIndex === i && (
+              <div id={`p-${p.slug}-body`} className="grid gap-px bg-border md:grid-cols-2">
                 {/* Left: title + summary + stack + links */}
                 <div className="space-y-5 bg-background p-6 sm:p-8">
                   <div>
