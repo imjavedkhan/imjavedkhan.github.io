@@ -9,14 +9,12 @@ A single-page, dark-mode, brutalist portfolio for a senior backend engineer. Cod
 
 ## ✦ Screenshots
 
-A quick tour of the four anchor sections. Drop the matching PNGs into `docs/screenshots/` (filenames listed below) and they'll render here on GitHub.
+A quick tour of the four anchor sections.
 
-| | |
-|---|---|
-| <img src="docs/screenshots/hero.png" alt="Hero section with 3D B-Tree animation and 'Available for hire' badge" width="100%" /> <br /> **Hero** — 3D B-Tree built with React Three Fiber, amber-on-slate type lockup, and the toggleable *“Available for hire”* status pill driven by `profile.availabilityText`. | <img src="docs/screenshots/projects.png" alt="Projects section with collapsible panels and architecture diagrams" width="100%" /> <br /> **Projects** — Collapsible `PROJECT/0N` panels with lazy-rendered Mermaid architecture diagrams, syntax-highlighted code snippets, and a fullscreen toggle for zooming into the details. |
-| <img src="docs/screenshots/certifications.png" alt="Certifications grid with external link indicators" width="100%" /> <br /> **Certifications** — Four-up grid (Coursera, Udemy, Azure, AWS). Each card is fully clickable with an `ExternalLink` glyph and a *“view credential ↗”* affordance. | <img src="docs/screenshots/contact.png" alt="Interactive terminal-style contact section" width="100%" /> <br /> **Contact** — Interactive terminal CLI styled like a shell prompt — try `help`, `email`, `github`, `linkedin`, or `resume` to navigate without leaving the keyboard. |
-
-> Tip: capture screenshots at **1440×900** with the browser in dark mode for a consistent look. Save them as PNG into `docs/screenshots/` using the exact filenames above.
+|                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/screenshots/hero.png" alt="Hero section with 3D B-Tree animation and 'Available for hire' badge" width="100%" /> <br /> **Hero** — 3D B-Tree built with React Three Fiber, amber-on-slate type lockup, and the toggleable _“Available for hire”_ status pill driven by `profile.availabilityText`. | <img src="docs/screenshots/projects.png" alt="Projects section with collapsible panels and architecture diagrams" width="100%" /> <br /> **Projects** — Collapsible `PROJECT/0N` panels with lazy-rendered Mermaid architecture diagrams, syntax-highlighted code snippets, and a fullscreen toggle for zooming into the details. |
+| <img src="docs/screenshots/certifications.png" alt="Certifications grid with external link indicators" width="100%" /> <br /> **Certifications** — Four-up grid (Coursera, Udemy, Azure, AWS). Each card is fully clickable with an `ExternalLink` glyph and a _“view credential ↗”_ affordance.                  | <img src="docs/screenshots/contact.png" alt="Interactive terminal-style contact section" width="100%" /> <br /> **Contact** — Interactive terminal CLI styled like a shell prompt — try `help`, `email`, `github`, `linkedin`, or `resume` to navigate without leaving the keyboard.                                              |
 
 ---
 
@@ -129,24 +127,24 @@ export const profile = {
   resumeUrl: "/resume.pdf",
   rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
 
-  availableForHire: true,                                    // hero badge on/off
-  availabilityText: "Open to new roles · remote or Noida",   // badge text
+  availableForHire: true, // hero badge on/off
+  availabilityText: "Open to new roles · remote or Noida", // badge text
 };
 ```
 
 Other exports in the same file:
 
-| Export | Drives |
-|---|---|
-| `stats` | About sidebar metrics |
-| `aboutLines` | README-style bio paragraphs |
-| `skills` | Skills matrix grid |
-| `experience` | Vertical timeline |
-| `projects` | Projects section (order = `PROJECT/01`, `PROJECT/02`, …) |
-| `projects[].diagram` | Mermaid `flowchart` source for the architecture panel |
-| `projects[].code` | Syntax-highlighted code snippet shown beside the diagram |
-| `education[].certificateUrl` | Clickable certificate badge |
-| `certifications[].url` | Each cert opens in a new tab |
+| Export                       | Drives                                                   |
+| ---------------------------- | -------------------------------------------------------- |
+| `stats`                      | About sidebar metrics                                    |
+| `aboutLines`                 | README-style bio paragraphs                              |
+| `skills`                     | Skills matrix grid                                       |
+| `experience`                 | Vertical timeline                                        |
+| `projects`                   | Projects section (order = `PROJECT/01`, `PROJECT/02`, …) |
+| `projects[].diagram`         | Mermaid `flowchart` source for the architecture panel    |
+| `projects[].code`            | Syntax-highlighted code snippet shown beside the diagram |
+| `education[].certificateUrl` | Clickable certificate badge                              |
+| `certifications[].url`       | Each cert opens in a new tab                             |
 
 To swap the resume, replace `public/resume.pdf`. To change the articles feed, update `profile.rssFeedUrl`. To reorder projects, just reorder the array — the `PROJECT/0N` numbering follows the array index.
 
