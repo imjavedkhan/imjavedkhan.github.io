@@ -152,6 +152,60 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "spring-ai-rag",
+    title: "spring-ai-rag",
+    summary:
+      "Spring AI POC for Retrieval-Augmented Generation. Ingests documents (PDF/DOC/images) via Tika, embeds with nomic-embed-text on Ollama, stores vectors in Postgres pgvector (HNSW + cosine), and answers queries with llama3.2 augmented by retrieved context. Includes LLaVA-powered image classification.",
+    stack: ["Java 17", "Spring Boot 3.5", "Spring AI 1.0", "Ollama", "pgvector", "Tika", "Docker"],
+    metrics: [
+      { label: "llm", value: "llama3.2" },
+      { label: "embed", value: "nomic" },
+      { label: "index", value: "hnsw/cos" },
+    ],
+    diagram: `flowchart LR
+  U[client] --> API[spring boot :8081]
+  API -->|upload| T[tika parser]
+  T --> SP[token splitter]
+  SP --> EMB[ollama nomic-embed-text]
+  EMB --> PG[(postgres pgvector)]
+  API -->|ask| RW[rewrite query]
+  RW --> RET[vector retriever]
+  RET --> PG
+  RET --> CTX[context]
+  CTX --> LLM[ollama llama3.2]
+  LLM --> API
+  IMG[image] --> LLAVA[ollama llava]
+  LLAVA --> CLS[classifier]`,
+    code: {
+      lang: "java",
+      title: "RagController.java",
+      body: `@RestController
+@RequestMapping("/api/rag")
+public class RagController {
+    private final ChatClient chat;
+    private final VectorStore store;
+
+    @PostMapping("/upload")
+    public ResponseEntity<Void> upload(@RequestParam MultipartFile file) {
+        var docs = new TikaDocumentReader(file.getResource()).get();
+        var chunks = new TokenTextSplitter().apply(docs);
+        store.add(chunks);
+        return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/ask")
+    public String ask(@RequestParam String query) {
+        return chat.prompt()
+            .advisors(new QuestionAnswerAdvisor(store))
+            .user(query)
+            .call()
+            .content();
+    }
+}`,
+    },
+    repo: "https://github.com/imjavedkhan/spring_ai_rag",
+  },
+  {
     slug: "auth-service",
     title: "auth-service",
     summary:
