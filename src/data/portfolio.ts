@@ -206,6 +206,58 @@ public class RagController {
     repo: "https://github.com/imjavedkhan/spring_ai_rag",
   },
   {
+    slug: "spring-ai-rag-fe",
+    title: "spring-ai-rag-fe",
+    summary:
+      "React + Vite frontend for the Spring AI RAG backend. Dashboard for AI chat, document upload (PDF/TXT/DOCX) into the RAG knowledge base, document classification, manual embedding generation, and direct content-store inserts. Talks to Spring Boot at :8081 over Axios.",
+    stack: ["React 18", "Vite", "Tailwind CSS", "React Router 7", "Axios", "Lucide"],
+    metrics: [
+      { label: "pages", value: "5" },
+      { label: "api", value: ":8081" },
+      { label: "router", value: "v7" },
+    ],
+    diagram: `flowchart LR
+  U[user] --> UI[react + vite :5173]
+  UI --> R[react-router v7]
+  R --> P1[ChatWithAI]
+  R --> P2[UploadDocument]
+  R --> P3[DocumentClassifier]
+  R --> P4[GenerateEmbedding]
+  R --> P5[AddContent]
+  P1 -->|axios| API[spring boot :8081]
+  P2 -->|axios| API
+  P3 -->|axios| API
+  P4 -->|axios| API
+  P5 -->|axios| API
+  API --> PG[(pgvector)]
+  API --> LLM[ollama llama3.2 / llava]`,
+    code: {
+      lang: "jsx",
+      title: "ChatWithAI.jsx",
+      body: `export default function ChatWithAI() {
+  const [query, setQuery] = useState("");
+  const [answer, setAnswer] = useState("");
+
+  const ask = async () => {
+    const { data } = await axios.get(
+      "http://localhost:8081/api/rag/ask",
+      { params: { query } }
+    );
+    setAnswer(data);
+  };
+
+  return (
+    <Card>
+      <Input value={query} onChange={(e) => setQuery(e.target.value)} />
+      <Button onClick={ask}>Ask</Button>
+      <pre>{answer}</pre>
+    </Card>
+  );
+}`,
+    },
+    repo: "https://github.com/imjavedkhan/spring_ai_rag_FE",
+  },
+  {
     slug: "auth-service",
     title: "auth-service",
     summary:
