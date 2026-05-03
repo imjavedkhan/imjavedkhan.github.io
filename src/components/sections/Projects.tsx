@@ -36,6 +36,8 @@ const theme: Record<string, React.CSSProperties> = {
 };
 
 export function Projects() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <section id="work" className="border-b border-border py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
