@@ -2,7 +2,6 @@
 
 A single-page, dark-mode, brutalist portfolio for a senior backend engineer. Code, diagrams, and logs are the primary visual language. Amber neon on slate, monospace everywhere, and a 3D B-Tree hero animation that responds to your cursor.
 
-> **Live preview:** built and shipped on [Lovable](https://lovable.dev)
 > **Author:** Javed Ali Khan — Senior Software Engineer (Java · Spring Boot · Microservices · Cloud · Spring AI)
 > **Contact:** [javedalikhan50@gmail.com](mailto:javedalikhan50@gmail.com) · [LinkedIn](https://linkedin.com/in/javedalikhan) · [GitHub](https://github.com/imjavedkhan) · [Medium](https://medium.com/@javedalikhan50)
 
@@ -163,8 +162,6 @@ To swap the resume, replace `public/resume.pdf`. To change the articles feed, up
 ---
 
 ## ✦ Deploying
-
-This project is built and hosted on [Lovable](https://lovable.dev). Open the project there and click **Publish**. Custom domains can be wired from the project settings.
 
 For self-hosting, any static host works — `npm run build` produces a static bundle in `dist/`.
 

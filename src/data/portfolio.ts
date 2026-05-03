@@ -15,7 +15,7 @@ export const profile = {
   resumeUrl: "https://drive.google.com/file/d/1wVNbhdN885fo1v1xes-Hqsm_wbFiuTgN/view?usp=sharing",
   rssFeedUrl: "https://medium.com/feed/@javedalikhan50",
   // Toggle to show/hide the "Available for hire" badge in the Hero section.
-  availableForHire: true,
+  availableForHire: false,
   // Customisable availability line shown inside the Hero badge (e.g. "Open to new roles").
   availabilityText: "Open to new roles · remote or Noida/Delhi NCR",
 };
