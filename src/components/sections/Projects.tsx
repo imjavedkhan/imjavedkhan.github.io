@@ -151,6 +151,7 @@ export function Projects() {
                   </div>
                 </div>
               </div>
+              )}
             </Reveal>
           ))}
         </div>
